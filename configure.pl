@@ -373,7 +373,7 @@ so group members can access backup files.
 
 EOF
 my($name, $passwd, $Uid, $Gid);
-while ( 1 ) {
+while ( 0 ) {
     $Conf{BackupPCUser} = prompt("--> BackupPC should run as user",
                                  $Conf{BackupPCUser} || "backuppc",
                                  "backuppc-user");

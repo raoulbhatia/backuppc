@@ -70,7 +70,6 @@ install: build
 	( cd ./buildroot/; \
 		chmod 755 ./configure.pl; \
 		./configure.pl --batch --no-fhs --uid-ignore --hostname XXXXXX \
-                        --no-set-perms \
 			--bin-path perl=/usr/bin/perl \
 			--bin-path tar=/bin/tar \
 			--bin-path smbclient=/usr/bin/smbclient \
