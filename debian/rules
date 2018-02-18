@@ -109,7 +109,7 @@ install: build
 	patch --no-backup-if-mismatch -p0 < debian/config.pl.diff
 	mkdir -p debian/backuppc/usr/share/backuppc/conf/
 	install --mode=644 debian/backuppc/etc/backuppc/config.pl debian/backuppc/usr/share/backuppc/conf/
-	rm -rf debian/backuppc/etc/backuppc/config.pl
+	rm -rf debian/backuppc/etc/backuppc/config.pl debian/backuppc/etc/backuppc/config.pl.sample debian/backuppc/etc/backuppc/hosts.sample
 	mkdir debian/backuppc/var/lib/backuppc/conf
 	ln -s /etc/backuppc/config.pl debian/backuppc/var/lib/backuppc/conf/config.pl
 
