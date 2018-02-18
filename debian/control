@@ -7,7 +7,7 @@ Build-Depends: debhelper (>= 9), backuppc-xs (>= 0.53), libtime-parsedate-perl, 
 
 Package: backuppc
 Architecture: amd64
-Depends: ${shlibs:Depends}, ${perl:Depends}, libdigest-md5-perl, libcompress-zlib-perl, libarchive-zip-perl, tar (>> 1.13), adduser (>=3.9), dpkg (>= 1.15.7.2), apache2 | httpd, ${misc:Depends}, bzip2, default-mta | exim4 | mail-transport-agent, iputils-ping | inetutils-ping, ucf, libtime-modules-perl, libwww-perl, apache2-utils, rrdtool, backuppc-xs (>= 0.53), rsync-bpc (>= 3.0.9.6)
+Depends: ${shlibs:Depends}, ${perl:Depends}, libcgi-pm-perl, libdigest-md5-perl, libcompress-zlib-perl, libarchive-zip-perl, tar (>> 1.13), adduser (>=3.9), dpkg (>= 1.15.7.2), apache2 | httpd, ${misc:Depends}, bzip2, default-mta | exim4 | mail-transport-agent, iputils-ping | inetutils-ping, ucf, libtime-modules-perl, libwww-perl, apache2-utils, rrdtool, backuppc-xs (>= 0.53), rsync-bpc (>= 3.0.9.6)
 Recommends: rsync, libfile-rsyncp-perl (>= 0.68), openssh-client | ssh-client, libio-dirent-perl, smbclient, samba-common-bin
 Suggests: w3m | www-browser, par2
 Description: high-performance, enterprise-grade system for backing up PCs
