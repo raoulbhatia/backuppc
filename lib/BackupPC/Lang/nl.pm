@@ -164,6 +164,7 @@ Er zijn \$hostCntGood hosts gebackupt, wat een totaal geeft van:
 <table class="sortable" id="host_summary_backups" border cellpadding="3" cellspacing="1">
 <tr class="tableheader"><td> Machine </td>
     <td align="center"> Gebruiker </td>
+    <td align="center"> Commentaar </td>
     <td align="center"> Aantal Voll. </td>
     <td align="center"> Voll.Lftd (dagen) </td>
     <td align="center"> Voll.Grootte (GiB) </td>
@@ -311,6 +312,7 @@ EOF
 
 # --------------------------------
 $Lang{BackupPC__Backup_Requested_on__host} = "BackupPC: backup aangevraagd van \$host";
+$Lang{BackupPC__Delete_Requested_for_a_backup_of__host} = "BackupPC: Delete Requested for a backup of \$host";
 # --------------------------------
 $Lang{REPLY_FROM_SERVER} = <<EOF;
 \${h1(\$str)}
@@ -647,6 +649,34 @@ Het antwoord van de server was: \$reply
 EOF
 
 
+# --------------------------------
+$Lang{BackupPC__Delete_Backup_Confirm__num_of__host} = "BackupPC: Delete Backup Confirm #\$num of \$host";
+# --------------------------------
+$Lang{A_filled} = "a filled";
+$Lang{An_unfilled} = "an unfilled";
+$Lang{Are_you_sure_delete} = <<EOF;
+\${h1("Are you sure?")}
+<p>
+You are about to delete \$filled \$type backup #\$num of \$host.
+
+<form name="Confirm" action="\$MyURL" method="get">
+
+<input type="hidden" name="host" value="\${EscHTML(\$host)}">
+<input type="hidden" name="num" value="\$num">
+
+<input type="hidden" name="doit" value="1">
+<input type="hidden" name="action" value="">
+
+Do you really want to do this?
+
+<input type="button" value="\${EscHTML(\$Lang->{CfgEdit_Button_Delete})}"
+ onClick="document.Confirm.action.value='deleteBackup';
+          document.Confirm.submit();">
+
+<input type="submit" value="No" name="ignore">
+</form>
+EOF
+
 # -------------------------
 $Lang{Host__host_Backup_Summary} = "BackupPC: Overzicht backup van machine \$host";
 
@@ -684,6 +714,7 @@ Klik op het backupnummer om de inhoud te bekijken of om bestanden te herstellen.
     <td align="center"> Startdatum </td>
     <td align="center"> Duurtijd in min. </td>
     <td align="center"> Lftd. in dagen </td>
+    <td align="center"> </td>
     <td align="center"> Plaats op de server </td>
 </tr>
 \$str
@@ -996,6 +1027,8 @@ $Lang{Only_privileged_users_can_view_log_files} = "Enkel gebruikers met bijzonde
 $Lang{Only_privileged_users_can_view_email_summaries} = "Enkel gebruikers met bijzondere rechten kunnen het e-mailoverzicht bekijken.";
 $Lang{Only_privileged_users_can_browse_backup_files} = "Enkel gebruikers met bijzondere rechten kunnen de backup "
                 . "van machine \${EscHTML(\$In{host})} bekijken.";
+$Lang{Only_privileged_users_can_delete_backups} = "Only privileged users can delete backups"
+                . " of host \${EscHTML(\$host)}.";
 $Lang{Empty_host_name} = "Geen of lege machinenaam.";
 $Lang{Directory___EscHTML} = "Map \${EscHTML(\"\$TopDir/pc/\$host/\$num\")}"
 		    . " is leeg";
@@ -1046,6 +1079,8 @@ $Lang{Backup_requested_on__host_by__User} = "backup aangevraagd van \$host door 
 $Lang{Backup_stopped_dequeued_on__host_by__User} = "backup geannuleerd van \$host door \$User";
 $Lang{Restore_requested_to_host__hostDest__backup___num} = "Herstel aangevraagd voor machine \$hostDest, backup nr.\$num,"
 	     . " door \$User vanaf \$ENV{REMOTE_ADDR}";
+$Lang{Delete_requested_for_backup_of__host_by__User} = "Delete requested for backup #\$num of \$host"
+             . " by \$User from \$ENV{REMOTE_ADDR}";
 $Lang{Archive_requested} = "Archivering aangevraagd door \$User vanaf \$ENV{REMOTE_ADDR}";
 
 # -------------------------------------------------

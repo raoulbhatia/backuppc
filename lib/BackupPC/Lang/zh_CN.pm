@@ -162,6 +162,7 @@ $Lang{BackupPC_Summary} = <<EOF;
 <table class="sortable" id="host_summary_backups" border cellpadding="3" cellspacing="1">
 <tr class="tableheader"><td> 客户机 </td>
     <td align="center"> 用户 </td>
+    <td align="center"> 评论 </td>
     <td align="center"> 完全备份个数 </td>
     <td align="center"> 最后一次完全备份 (天前) </td>
     <td align="center"> 完全备份大小 (GiB) </td>
@@ -308,6 +309,7 @@ EOF
 
 # --------------------------------
 $Lang{BackupPC__Backup_Requested_on__host} = "BackupPC: 客户机 \$host 有备份请求";
+$Lang{BackupPC__Delete_Requested_for_a_backup_of__host} = "BackupPC: Delete Requested for a backup of \$host";
 # --------------------------------
 $Lang{REPLY_FROM_SERVER} = <<EOF;
 \${h1(\$str)}
@@ -631,6 +633,34 @@ $Lang{BackupPC_Archive_Reply_from_server} = <<EOF;
 EOF
 
 
+# --------------------------------
+$Lang{BackupPC__Delete_Backup_Confirm__num_of__host} = "BackupPC: Delete Backup Confirm #\$num of \$host";
+# --------------------------------
+$Lang{A_filled} = "a filled";
+$Lang{An_unfilled} = "an unfilled";
+$Lang{Are_you_sure_delete} = <<EOF;
+\${h1("Are you sure?")}
+<p>
+You are about to delete \$filled \$type backup #\$num of \$host.
+
+<form name="Confirm" action="\$MyURL" method="get">
+
+<input type="hidden" name="host" value="\${EscHTML(\$host)}">
+<input type="hidden" name="num" value="\$num">
+
+<input type="hidden" name="doit" value="1">
+<input type="hidden" name="action" value="">
+
+Do you really want to do this?
+
+<input type="button" value="\${EscHTML(\$Lang->{CfgEdit_Button_Delete})}"
+ onClick="document.Confirm.action.value='deleteBackup';
+          document.Confirm.submit();">
+
+<input type="submit" value="No" name="ignore">
+</form>
+EOF
+
 # -------------------------
 $Lang{Host__host_Backup_Summary} = "BackupPC: 客户机 \$host 备份报告";
 
@@ -668,6 +698,7 @@ $Lang{Host__host_Backup_Summary2} = <<EOF;
     <td align="center"> 开始时间 </td>
     <td align="center"> 耗时（分钟）</td>
     <td align="center"> 距离现在（天前）</td>
+    <td align="center"> </td>
     <td align="center"> 服务器上备份路径 </td>
 </tr>
 \$str
@@ -973,6 +1004,8 @@ $Lang{Only_privileged_users_can_view_log_files} = "只有特权用户可以查�
 $Lang{Only_privileged_users_can_view_email_summaries} = "只有特权用户可以查看电子邮件报告。";
 $Lang{Only_privileged_users_can_browse_backup_files} = "只有特权用户可以浏览"
                 . "客户机 \${EscHTML(\$In{host})} 的备份文件。";
+$Lang{Only_privileged_users_can_delete_backups} = "Only privileged users can delete backups"
+                . " of host \${EscHTML(\$host)}.";
 $Lang{Empty_host_name} = "空客户机名。";
 $Lang{Directory___EscHTML} = "目录 \${EscHTML(\"\$TopDir/pc/\$host/\$num\")}"
 		    . " 为空";
@@ -1018,6 +1051,8 @@ $Lang{Backup_requested_on_DHCP__host} = "用户 \$User 从 \$ENV{REMOTE_ADDR} �
 $Lang{Backup_requested_on__host_by__User} = "用户 \$User 发起请求备份客户机 \$host";
 $Lang{Backup_stopped_dequeued_on__host_by__User} = "用户 \$User 停止／取消了对客户机 \$host 的备份";
 $Lang{Restore_requested_to_host__hostDest__backup___num} = "用户 \$User 从 \$ENV{REMOTE_ADDR} 发起请求恢复客户机 \$hostDest，使用备份序列号 #\$num";
+$Lang{Delete_requested_for_backup_of__host_by__User} = "Delete requested for backup #\$num of \$host"
+             . " by \$User from \$ENV{REMOTE_ADDR}";
 $Lang{Archive_requested} = "用户 \$User 从 \$ENV{REMOTE_ADDR} 发起备档请求";
 
 # -------------------------------------------------

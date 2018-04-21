@@ -10,7 +10,7 @@
 #   Craig Barratt  <cbarratt@users.sourceforge.net>
 #
 # COPYRIGHT
-#   Copyright (C) 2003-2013  Craig Barratt
+#   Copyright (C) 2003-2018  Craig Barratt
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 #
 #========================================================================
 #
-# Version 4.0.0alpha3, released 1 Dec 2013.
+# Version 4.2.0, released 18 Feb 2018.
 #
 # See http://backuppc.sourceforge.net.
 #
@@ -157,13 +157,22 @@ EOF
                             if ( $Backups[$i]{fillFromNum} ne "" );
         my $ltype = $Lang->{"backupType_$Backups[$i]{type}"};
         $str .= <<EOF;
-<tr><td align="center" class="border"> <a href="$browseURL">$Backups[$i]{num}</a> </td>
+<tr>
+    <td align="center" class="border"> <a href="$browseURL">$Backups[$i]{num}</a> </td>
     <td align="center" class="border"> $ltype </td>
     <td align="center" class="border"> $filled </td>
     <td align="center" class="border"> $level </td>
     <td align="right" class="border">  $startTime </td>
     <td align="right" class="border">  $duration </td>
     <td align="right" class="border">  $age </td>
+    <td align="center" class="border"><form name="DeleteForm" action="$MyURL" method="get" style="margin-bottom: 0px;">
+        <input type="hidden" name="action" value="deleteBackup">
+        <input type="hidden" name="host"   value="$host">
+        <input type="hidden" name="num"    value="$Backups[$i]{num}">
+        <input type="hidden" name="nofill" value="$Backups[$i]{noFill}">
+        <input type="hidden" name="type"   value="$Backups[$i]{type}">
+        <input type="submit" value="${EscHTML($Lang->{CfgEdit_Button_Delete})}">
+    </form></td>
     <td align="left" class="border">   <tt>$TopDir/pc/$host/$Backups[$i]{num}</tt> </td></tr>
 EOF
         $sizeStr .= <<EOF;
@@ -356,6 +365,9 @@ EOF
         my $hours = sprintf("%.1f", ($StatusHost{backoffTime} - time) / 3600);
         $statusStr .= eval("qq{$Lang->{Backups_are_deferred_for_hours_hours_change_this_number}}");
 
+    }
+    if ( length($Conf{ClientComment}) ) {
+        $statusStr .= "<li>${EscHTML($Conf{ClientComment})}\n";
     }
     if ( @Backups ) {
         # only allow incremental if there are already some backups

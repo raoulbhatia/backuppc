@@ -163,6 +163,7 @@ Il y a \$hostCntGood hôtes ayant été sauvegardés, pour un total de :
 <table class="sortable" id="host_summary_backups" border cellpadding="3" cellspacing="1">
 <tr class="tableheader"><td> Hôte </td>
     <td align="center"> Utilisateur </td>
+    <td align="center"> Commentaire </td>
     <td align="center"> Nb complètes </td>
     <td align="center"> Complètes Âge (jours) </td>
     <td align="center"> Complètes Taille (Go) </td>
@@ -309,6 +310,7 @@ EOF
 
 # -----------------------------------
 $Lang{BackupPC__Backup_Requested_on__host} = "BackupPC: Sauvegarde demandée sur \$host";
+$Lang{BackupPC__Delete_Requested_for_a_backup_of__host} = "BackupPC: Delete Requested for a backup of \$host";
 # --------------------------------
 $Lang{REPLY_FROM_SERVER} = <<EOF;
 \${h1(\$str)}
@@ -643,6 +645,34 @@ La réponse du serveur est : \$reply
 EOF
 
 
+# --------------------------------
+$Lang{BackupPC__Delete_Backup_Confirm__num_of__host} = "BackupPC: Delete Backup Confirm #\$num of \$host";
+# --------------------------------
+$Lang{A_filled} = "a filled";
+$Lang{An_unfilled} = "an unfilled";
+$Lang{Are_you_sure_delete} = <<EOF;
+\${h1("Are you sure?")}
+<p>
+You are about to delete \$filled \$type backup #\$num of \$host.
+
+<form name="Confirm" action="\$MyURL" method="get">
+
+<input type="hidden" name="host" value="\${EscHTML(\$host)}">
+<input type="hidden" name="num" value="\$num">
+
+<input type="hidden" name="doit" value="1">
+<input type="hidden" name="action" value="">
+
+Do you really want to do this?
+
+<input type="button" value="\${EscHTML(\$Lang->{CfgEdit_Button_Delete})}"
+ onClick="document.Confirm.action.value='deleteBackup';
+          document.Confirm.submit();">
+
+<input type="submit" value="No" name="ignore">
+</form>
+EOF
+
 # -------------------------
 $Lang{Host__host_Backup_Summary} = "BackupPC: Résumé de la sauvegarde de l\'hôte \$host ";
 
@@ -680,6 +710,7 @@ Cliquer sur le numéro de l\'archive pour naviguer et restaurer les fichiers de s
     <td align="center"> Date de démarrage </td>
     <td align="center"> Durée (min) </td>
     <td align="center"> Âge (jours) </td>
+    <td align="center"> </td>
     <td align="center"> Chemin d\'accès de la sauvegarde sur le serveur </td>
 </tr>
 \$str
@@ -992,6 +1023,8 @@ $Lang{Only_privileged_users_can_view_log_files} = "Seuls les utilisateurs privil
 $Lang{Only_privileged_users_can_view_email_summaries} = "Seuls les utilisateurs privilégiés peuvent voir les compte-rendus des courriels.";
 $Lang{Only_privileged_users_can_browse_backup_files} = "Seuls les utilisateurs privilégiés peuvent parcourir les fichiers de sauvegarde"
                  . " pour l'hôte \${EscHTML(\$In{host})}.";
+$Lang{Only_privileged_users_can_delete_backups} = "Only privileged users can delete backups"
+                . " of host \${EscHTML(\$host)}.";
 $Lang{Empty_host_name} = "Nom d\'hôte vide.";
 $Lang{Directory___EscHTML} = "Le répertoire \${EscHTML(\"\$TopDir/pc/\$host/\$num\")}"
 		    . " est vide";
@@ -1042,6 +1075,8 @@ $Lang{Backup_requested_on__host_by__User} = "Sauvegarde demandée sur \$host par 
 $Lang{Backup_stopped_dequeued_on__host_by__User} = "Sauvegarde arrêtée/déprogrammée pour \$host par \$User";
 $Lang{Restore_requested_to_host__hostDest__backup___num} = "Restauration demandée pour l\'hôte \$hostDest, "
              . "sauvegarde n°\$num, par \$User depuis \$ENV{REMOTE_ADDR}";
+$Lang{Delete_requested_for_backup_of__host_by__User} = "Delete requested for backup #\$num of \$host"
+             . " by \$User from \$ENV{REMOTE_ADDR}";
 $Lang{Archive_requested} = "Archivage demandé par \$User de \$ENV{REMOTE_ADDR}";
 
 # -------------------------------------------------

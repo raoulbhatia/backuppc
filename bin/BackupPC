@@ -27,7 +27,7 @@
 #   Craig Barratt  <cbarratt@users.sourceforge.net>
 #
 # COPYRIGHT
-#   Copyright (C) 2001-2017  Craig Barratt
+#   Copyright (C) 2001-2018  Craig Barratt
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@
 #
 #========================================================================
 #
-# Version 4.1.4, released 24 Nov 2017.
+# Version 4.2.0, released 18 Feb 2018.
 #
 # See http://backuppc.sourceforge.net.
 #
@@ -121,7 +121,7 @@ if ( $Conf{RsyncBackupPCPath} ne "" && -x $Conf{RsyncBackupPCPath} ) {
         exit(1);
     }
     my $version = "unknown";
-    $version = $1 if ( $output =~ /rsync_bpc\s+version\s+([\d.]+)\s+protocol/ );
+    $version = $1 if ( $output =~ /rsync_bpc\s+version\s+([\d.]+)(beta\d+)?\s+protocol/ );
     if ( $version eq "unknown" || version->parse($1) < version->parse($PackageVersion->{rsync_bpc}) ) {
         print(STDERR "BackupPC: rsync_bpc at $Conf{RsyncBackupPCPath} needs to be upgraded (got version $1; need >= $PackageVersion->{rsync_bpc}); exiting in 30s\n");
         sleep(30);
@@ -284,7 +284,7 @@ sub Main_Initialize
         next if ( $Conf{$progName} eq "" || -x $Conf{$progName} );
         print(STDERR $bpc->timeStamp,
                      "\$Conf{$progName} = '$Conf{$progName}' is not a"
-                   . " valid executable program\n");
+                   . " valid executable program; exiting\n");
         exit(1);
     }
  
@@ -292,7 +292,7 @@ sub Main_Initialize
     # Create $RunDir if it doesn't exist
     #
     if ( !-d $RunDir && !mkdir($RunDir, 0755) ) {
-        print(STDERR $bpc->timeStamp, "Can't create $RunDir... quitting\n");
+        print(STDERR $bpc->timeStamp, "Can't create $RunDir... exiting\n");
         exit(1);
     }
 
@@ -304,7 +304,7 @@ sub Main_Initialize
                    . " or these directories don't exist, or there is a permissions"
                    . " problem, or the file system is out of inodes or full.  Use"
                    . " df, df -i, and ls -ld to check each of these possibilities."  
-                   . " Quitting...\n");
+                   . " Exiting...\n");
         exit(1);
     }
 
@@ -751,6 +751,10 @@ sub Main_TryToRun_Bg_or_User_Queue
             $progName = "BackupPC_restore";
             $type     = "restore";
             push(@args, $req->{hostIP}, $req->{host}, $req->{reqFileName});
+        } elsif ( $req->{delete} ) {
+            $progName = "BackupPC_backupDelete";
+            $type     = "delete";
+            push(@args, '-L', '-h', $req->{host}, '-n', $req->{num}, $req->{opts});
 	} elsif ( $req->{archive} ) {
             $progName = "BackupPC_archive";
             $type     = "archive";
@@ -1568,6 +1572,35 @@ sub Main_Check_Client_Messages
                         $reply = "ok: requested restore of $host";
                     }
                 }
+            } elsif ( $cmd =~ /^delete (\S+)\s+(\S+)\s+(\d+)\s+(.*)/ ) {
+                my $user = $1;
+                $host    = $bpc->uriUnesc($2);
+                my $num  = $3;
+                my $opts = $4;
+                if ( !defined($Hosts->{$host}) ) {
+                    print(LOG $bpc->timeStamp,
+                               "User $user requested delete from unknown host $host");
+                    $reply = "delete error: unknown host $host";
+                } else {
+                    print(LOG $bpc->timeStamp,
+                               "User $user requested delete for backup #$num from $host\n");
+                    unshift(@UserQueue, {
+                                host    => $host,
+                                num     => $num,
+                                reqTime => time,
+                                delete  => 1,
+                                opts    => $opts,
+                                userReq => 1,
+                        });
+                    $UserQueueOn{$host} = 1;
+                    if ( defined($Jobs{$host}) ) {
+                        $reply = "ok: requested delete from $host, but a"
+                               . " job is currently running,"
+                               . " so this request will start later";
+                    } else {
+                        $reply = "ok: requested delete from $host";
+                    }
+                }
             } elsif ( $cmd =~ /^status\s*(.*)/ ) {
                 my($args) = $1;
                 my($dump, @values, @names);
@@ -1948,17 +1981,17 @@ sub ServerSocketInit
         # one-time only: initialize unix-domain socket
         #
         if ( !socket(SERVER_UNIX, PF_UNIX, SOCK_STREAM, 0) ) {
-            print(LOG $bpc->timeStamp, "unix socket() failed: $!\n");
+            print(LOG $bpc->timeStamp, "unix socket() failed: $!; exiting\n");
             exit(1);
         }
         my $sockFile = "$RunDir/BackupPC.sock";
         unlink($sockFile);
         if ( !bind(SERVER_UNIX, sockaddr_un($sockFile)) ) {
-            print(LOG $bpc->timeStamp, "unix bind() failed: $!\n");
+            print(LOG $bpc->timeStamp, "unix bind($sockFile) failed: $! (does $RunDir exist and writeable by BackupPC?); exiting\n");
             exit(1);
         }
         if ( !listen(SERVER_UNIX, SOMAXCONN) ) {
-            print(LOG $bpc->timeStamp, "unix listen() failed: $!\n");
+            print(LOG $bpc->timeStamp, "unix listen($sockFile) failed: $!; exiting\n");
             exit(1);
         }
         vec($FDread, fileno(SERVER_UNIX), 1) = 1;
@@ -1975,19 +2008,19 @@ sub ServerSocketInit
         #
         my $proto = getprotobyname('tcp');
         if ( !socket(SERVER_INET, PF_INET, SOCK_STREAM, $proto) ) {
-            print(LOG $bpc->timeStamp, "inet socket() failed: $!\n");
+            print(LOG $bpc->timeStamp, "inet socket() failed: $!; exiting\n");
             exit(1);
         }
         if ( !setsockopt(SERVER_INET, SOL_SOCKET, SO_REUSEADDR, pack("l",1)) ) {
-            print(LOG $bpc->timeStamp, "setsockopt() failed: $!\n");
+            print(LOG $bpc->timeStamp, "setsockopt() failed: $!; exiting\n");
             exit(1);
         }
         if ( !bind(SERVER_INET, sockaddr_in($Conf{ServerPort}, INADDR_ANY)) ) {
-            print(LOG $bpc->timeStamp, "inet bind() failed: $!\n");
+            print(LOG $bpc->timeStamp, "inet bind() failed: $!; exiting\n");
             exit(1);
         }
         if ( !listen(SERVER_INET, SOMAXCONN) ) {
-            print(LOG $bpc->timeStamp, "inet listen() failed: $!\n");
+            print(LOG $bpc->timeStamp, "inet listen() failed: $!; exiting\n");
             exit(1);
         }
         vec($FDread, fileno(SERVER_INET), 1) = 1;

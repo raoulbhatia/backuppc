@@ -1282,6 +1282,7 @@ $Conf{RsyncArgs} = [
 #                                 $Conf{ClientNameAlias} is set)
 #        $hostIP       IP address of host
 #        $confDir      configuration directory path
+#        $shareName    share name being backed up
 #
 # This allows settings of the form:
 #
@@ -1821,6 +1822,12 @@ $Conf{UserCmdCheckStatus} = 0;
 #
 $Conf{ClientNameAlias} = undef;
 
+#
+# A user-settable comment string that is displayed in this host's status.
+# The value is otherwise ignored by BackupPC.
+#
+$Conf{ClientComment} = undef;
+
 ###########################################################################
 # Email reminders, status and messages
 # (can be overridden in the per-PC config.pl)
@@ -2196,6 +2203,7 @@ $Conf{CgiUserConfigEdit} = {
         BlackoutPeriods           => 1,
         ClientCharset             => 1,
         ClientCharsetLegacy       => 1,
+        ClientComment             => 1,
         ClientNameAlias           => 1,
         ClientTimeout             => 1,
         CompressLevel             => 1,
