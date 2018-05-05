@@ -1150,14 +1150,14 @@ $Conf{TarClientPath} = '';
 #
 # This setting only matters if $Conf{XferMethod} = 'rsync'.
 #
-$Conf{RsyncClientPath} = '';
+$Conf{RsyncClientPath} = '/usr/bin/rsync';
 
 #
 # Full path to rsync_bpc on the server.  Rsync_bpc is the customized
 # version of rsync that is used on the server for rsync and rsyncd
 # transfers.
 #
-$Conf{RsyncBackupPCPath} = "";
+$Conf{RsyncBackupPCPath} = "/usr/bin/rsync_bpc";
 
 #
 # Ssh arguments for rsync to run ssh to connect to the client.

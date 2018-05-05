@@ -90,7 +90,7 @@ case "$1" in
     # creating backuppc user if he isn't already there
     if ! getent passwd backuppc >/dev/null; then
 	adduser --system --gecos "BackupPC" --ingroup backuppc \
-	    --shell /bin/sh --home /var/lib/backuppc backuppc >/dev/null
+	    --shell /bin/bash --home /var/lib/backuppc backuppc >/dev/null
 	    
         # add backuppc to /etc/aliases
         if [ -f /etc/aliases ] || [ -L /etc/aliases ]; then
