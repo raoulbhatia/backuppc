@@ -27,7 +27,7 @@
 #   Craig Barratt  <cbarratt@users.sourceforge.net>
 #
 # COPYRIGHT
-#   Copyright (C) 2001-2018  Craig Barratt
+#   Copyright (C) 2001-2020  Craig Barratt
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@
 #
 #========================================================================
 #
-# Version 4.3.0, released 25 Nov 2018.
+# Version 4.3.2, released 17 Feb 2020.
 #
 # See http://backuppc.sourceforge.net.
 #
@@ -170,14 +170,23 @@ my @BgQueue    = ();
 my(%CmdQueueOn, %UserQueueOn, %BgQueueOn);
 
 #
+# BackupPC_tarCreate and BackupPC_zipCreate shouldn't run when a backup
+# is active.  We maintain a per-host mutex.  A -1 value means a
+# backup or delete job is running (ie: a writer).  A positive value
+# is the number of readers, ie: restore, archive, BackupPC_tarCreate,
+# BackupPC_zipCreate processes running.  Zero means that host is idle.
+#
+my(%HostMutex, %HostMutexCurrJob);
+
+#
 # One or more clients can connect to the server to get status information
 # or request/cancel backups etc.  The %Clients hash maintains information
 # about each of these socket connections.  The hash key is an incrementing
 # number stored in $ClientConnCnt.  Each entry is a hash that contains
 # various information about the client connection.
 #
-my %Clients    = ();
-my $ClientConnCnt;
+my %Clients       = ();
+my $ClientConnCnt = 0;
 
 #
 # Read file descriptor mask used by select().  Every file descriptor
@@ -200,8 +209,12 @@ my $SigName = "";
 #
 # Misc variables
 #
-my($RunNightlyWhenIdle, $FirstWakeup, $CmdJob, $ServerInetPort);
-my($BackupPCNightlyJobs, $BackupPCNightlyLock);
+my $CmdJob              = "";
+my $BackupPCNightlyJobs = 0;
+my $BackupPCNightlyLock = 0;
+my $FirstWakeup         = 0;
+my $RunNightlyWhenIdle  = 0;
+my $ServerInetPort      = -1;
 
 #
 # Complete the rest of the initialization
@@ -273,7 +286,7 @@ sub Main_Initialize
     # correctly and make sure $TopDir is on a file system that supports
     # hardlinks.
     #
-    if ( $Info->{pid} ne "" && kill(0, $Info->{pid}) && !$bpc->ServerConnect($Conf{ServerHost}, $Conf{ServerPort}) ) {
+    if ( defined $Info->{pid} && kill(0, $Info->{pid}) && !$bpc->ServerConnect($Conf{ServerHost}, $Conf{ServerPort}) ) {
         print(STDERR $bpc->timeStamp,
                  "Another BackupPC is running (pid $Info->{pid}); quitting...\n");
         exit(1);
@@ -281,7 +294,7 @@ sub Main_Initialize
 
     foreach my $progName ( qw(SmbClientPath NmbLookupPath PingPath DfPath
                               SendmailPath SshPath RsyncBackupPCPath) ) {
-        next if ( $Conf{$progName} eq "" || -x $Conf{$progName} );
+        next if ( !defined $Conf{$progName} || $Conf{$progName} eq "" || -x $Conf{$progName} );
         print(STDERR $bpc->timeStamp,
                      "\$Conf{$progName} = '$Conf{$progName}' is not a"
                    . " valid executable program; exiting\n");
@@ -323,7 +336,7 @@ sub Main_Initialize
 
         chdir ("/") or die("Cannot chdir to /: $!\n");
         close(STDIN);
-        open(STDIN , ">/dev/null") or die("Cannot open /dev/null as stdin\n");
+        open(STDIN, "<", "/dev/null") or die("Cannot open /dev/null as stdin\n");
         # STDOUT and STDERR are handled in LogFileOpen() right below,
         # otherwise we would have to reopen them too.
     }
@@ -431,8 +444,8 @@ sub Main_TryToRun_nightly
         #
 	$Conf{MaxBackupPCNightlyJobs} = 1
 		    if ( $Conf{MaxBackupPCNightlyJobs} <= 0 );
-	$Conf{BackupPCNightlyPeriod} = 1
-		    if ( $Conf{BackupPCNightlyPeriod} <= 0 );
+        $Info->{NightlyPhase} = $Info->{NightlyPhase} % $Conf{BackupPCNightlyPeriod}
+                    if ( $Info->{NightlyPhase} < 0 || $Info->{NightlyPhase} >= $Conf{BackupPCNightlyPeriod} );
         $Info->{PoolSizeNightlyPhase} ||= 0;
 	#
 	# Decide what subset of the 16 top-level directories 0..9a..f
@@ -517,6 +530,7 @@ sub Main_TryToRun_nightly
                     $Info->{pool}{"${p}4"}[$i]{FileLinkMax}   = 0;
                     $Info->{pool}{"${p}4"}[$i]{FileLinkTotal} = 0;
                     $Info->{pool}{"${p}4"}[$i]{Time}          = 0;
+                    delete $Info->{pool}{"${p}4"}[$i]{FileCntRename};
                 }
             }
         }
@@ -583,12 +597,8 @@ sub Main_TryToRun_CmdQueue
         $host = $req->{host};
         if ( defined($Jobs{$host}) ) {
             print(LOG $bpc->timeStamp,
-                       "Botch on admin job for $host: already in use!!\n");
-            #
-            # Just put this request back on the end of the queue.
-            #
-            unshift(@CmdQueue, $req);
-            return;
+                       "Botch on admin job for $host: already in use!! skipping cmd: $req->{cmd})\n");
+            next;
         }
         $CmdQueueOn{$host} = 0;
         my $cmd  = $req->{cmd};
@@ -603,9 +613,10 @@ sub Main_TryToRun_CmdQueue
             setpgrp 0,0;
             $ENV{BPC_REQUSER} = $req->{user};
             POSIX::nice($Conf{CmdQueueNice}) if ( $Conf{CmdQueueNice} );
-            exec(@$cmd);
-            print(LOG $bpc->timeStamp, "can't exec @$cmd for $host\n");
-            exit(0);
+            unless ( exec(@$cmd) ) {
+                print( LOG $bpc->timeStamp, "can't exec @$cmd for $host\n" );
+                exit(0);
+            }
         }
         $Jobs{$host}{pid}       = $pid;
         $Jobs{$host}{fh}        = *FH;
@@ -647,7 +658,7 @@ sub Main_TryToRun_Bg_or_User_Queue
     my(@deferUserQueue, @deferBgQueue);
     my($du, $duInode);
 
-    if ( time - $Info->{DUlastValueTime} >= 600 ) {
+    if ( !defined $Info->{DUlastValueTime} || time - $Info->{DUlastValueTime} >= 600 ) {
         #
         # Update our notion of disk usage no more than
         # once every 10 minutes
@@ -670,11 +681,11 @@ sub Main_TryToRun_Bg_or_User_Queue
         $Info->{DUDailyMax}          = 0;
         $Info->{DUInodeDailyMax}     = 0;
     }
-    if ( $du > $Info->{DUDailyMax} ) {
+    if ( !defined $Info->{DUDailyMax} || $du > $Info->{DUDailyMax} ) {
         $Info->{DUDailyMax}     = $du;
         $Info->{DUDailyMaxTime} = time;
     }
-    if ( $duInode > $Info->{DUInodeDailyMax} ) {
+    if ( !defined $Info->{DUInodeDailyMax} || $duInode > $Info->{DUInodeDailyMax} ) {
         $Info->{DUInodeDailyMax}     = $duInode;
         $Info->{DUInodeDailyMaxTime} = time;
     }
@@ -728,6 +739,17 @@ sub Main_TryToRun_Bg_or_User_Queue
                         && @UserQueue > 0 ) {
             $req = pop(@UserQueue);
             if ( defined($Jobs{$req->{host}}) ) {
+                #
+                # Job is currently running for this host; save it for later
+                #
+                push(@deferUserQueue, $req);
+                next;
+            }
+            if ( $HostMutex{$req->{host}} > 0 && !$req->{restore} && !$req->{archive} ) {
+                #
+                # Currently there are readers (eg, BackupPC_tarCreate) running, so we
+                # can't run a backup or delete
+                #
                 push(@deferUserQueue, $req);
                 next;
             }
@@ -744,6 +766,14 @@ sub Main_TryToRun_Bg_or_User_Queue
                 unshift(@deferBgQueue, $req);
                 next;
             }
+            if ( $HostMutex{$req->{host}} > 0 && !$req->{restore} && !$req->{archive} ) {
+                #
+                # Currently there are readers (eg, BackupPC_tarCreate) running, so we
+                # can't run a backup or delete
+                #
+                unshift(@deferBgQueue, $req);
+                next;
+            }
             $BgQueueOn{$req->{host}} = 0;
         } else {
             #
@@ -756,20 +786,20 @@ sub Main_TryToRun_Bg_or_User_Queue
         $host = $req->{host};
         my $user = $req->{user};
         if ( $req->{restore} ) {
-            $progName = "BackupPC_restore";
-            $type     = "restore";
+            $progName   = "BackupPC_restore";
+            $type       = "restore";
             push(@args, $req->{hostIP}, $req->{host}, $req->{reqFileName});
         } elsif ( $req->{delete} ) {
-            $progName = "BackupPC_backupDelete";
-            $type     = "delete";
-            push(@args, '-L', '-h', $req->{host}, '-n', $req->{num}, $req->{opts});
+            $progName   = "BackupPC_backupDelete";
+            $type       = "delete";
+            push(@args, "-L", "-h", $req->{host}, '-n', $req->{num}, $req->{opts});
 	} elsif ( $req->{archive} ) {
-            $progName = "BackupPC_archive";
-            $type     = "archive";
+            $progName   = "BackupPC_archive";
+            $type       = "archive";
             push(@args, $req->{user}, $req->{host}, $req->{reqFileName});
         } else {
-            $progName = "BackupPC_dump";
-            $type     = "backup";
+            $progName   = "BackupPC_dump";
+            $type       = "backup";
             push(@args, "-I") if ( $req->{backupType} eq "autoIncr" );
             push(@args, "-F") if ( $req->{backupType} eq "autoFull" );
             push(@args, "-i") if ( $req->{backupType} eq "doIncr" );
@@ -787,9 +817,10 @@ sub Main_TryToRun_Bg_or_User_Queue
         }
         if ( !$pid ) {
             setpgrp 0,0;
-            exec("$BinDir/$progName", @args);
-            print(LOG $bpc->timeStamp, "can't exec $progName for $host\n");
-            exit(0);
+            unless ( exec( "$BinDir/$progName", @args ) ) {
+                print( LOG $bpc->timeStamp, "can't exec $progName for $host\n" );
+                exit(0);
+            }
         }
         $Jobs{$host}{pid}        = $pid;
         $Jobs{$host}{fh}         = *FH;
@@ -950,7 +981,7 @@ sub Main_Check_Timeout
         # Remember to run the nightly script when the next CmdQueue
         # job is done.
         #
-        if ( $RunNightlyWhenIdle == 2 ) {
+        if ( $RunNightlyWhenIdle == 2 || $BackupPCNightlyJobs > 0 ) {
             print(LOG $bpc->timeStamp, "BackupPC_nightly is still running after 24 hours!!"
                                      . "  You should adjust the config settings; Skipping this run\n");
         } else {
@@ -1004,30 +1035,7 @@ sub Main_Check_Job_Messages
         while ( $Jobs{$host}{mesg} =~ /(.*?)[\n\r]+(.*)/s ) {
             $mesg = $1;
             $Jobs{$host}{mesg} = $2;
-            if ( $Jobs{$host}{dhcp} ) {
-                if ( $mesg =~ /^DHCP (\S+) (\S+)/ ) {
-                    my $newHost = $bpc->uriUnesc($2);
-                    if ( defined($Jobs{$newHost}) ) {
-                        print(LOG $bpc->timeStamp,
-                                "Backup on $newHost is already running\n");
-                        kill($bpc->sigName2num("INT"), $Jobs{$host}{pid});
-                        $nbytes = 0;
-                        last;
-                    }
-                    $Jobs{$host}{dhcpHostIP} = $host;
-                    $Status->{$newHost}{dhcpHostIP} = $host;
-                    $Jobs{$newHost} = $Jobs{$host};
-                    delete($Jobs{$host});
-                    $host = $newHost;
-                    $Status->{$host}{state}      = "Status_backup_starting";
-                    $Status->{$host}{activeJob}  = 1;
-                    $Status->{$host}{startTime}  = $Jobs{$host}{startTime};
-                    $Status->{$host}{endTime}    = "";
-                    $Jobs{$host}{dhcp}           = 0;
-                } else {
-                    print(LOG $bpc->timeStamp, "dhcp $host: $mesg\n");
-                }
-            } elsif ( $mesg =~ /^started (.*) dump, share=(.*)/ ) {
+            if ( $mesg =~ /^started (.*) dump, share=(.*)/ ) {
                 $Jobs{$host}{type}      = $1;
                 $Jobs{$host}{shareName} = $2;
                 print(LOG $bpc->timeStamp,
@@ -1042,7 +1050,7 @@ sub Main_Check_Job_Messages
                 $Status->{$host}{deadCnt}   = 0;
                 $Status->{$host}{aliveCnt}++;
                 $Status->{$host}{dhcpCheckCnt}--
-                                if ( $Status->{$host}{dhcpCheckCnt} > 0 );
+                                if ( defined $Status->{$host}{dhcpCheckCnt} && $Status->{$host}{dhcpCheckCnt} > 0 );
             } elsif ( $mesg =~ /^xferPids *(.*)/ ) {
                 $Jobs{$host}{xferPid} = $1;
             } elsif ( $mesg =~ /^__bpc_progress_state__ (.*)/ ) {
@@ -1106,7 +1114,7 @@ sub Main_Check_Job_Messages
 		    $Status->{$host}{startTime} = time;
 		}
                 $Status->{$host}{dhcpCheckCnt}--
-                                if ( $Status->{$host}{dhcpCheckCnt} > 0 );
+                                if ( defined $Status->{$host}{dhcpCheckCnt} && $Status->{$host}{dhcpCheckCnt} > 0 );
             } elsif ( $mesg =~ /^no ping response/
                             || $mesg =~ /^ping too slow/
                             || $mesg =~ /^host not found/ ) {
@@ -1262,7 +1270,11 @@ sub Main_Check_Job_Messages
 			    $Info->{"${p}FileCntRm"}     = 0;
 			    $Info->{"${p}FileCntRep"}    = 0;
 			    $Info->{"${p}FileRepMax"}    = 0;
-			    $Info->{"${p}FileCntRename"} = 0;
+			    if ( $p =~ /^c?pool$/ ) {
+				$Info->{"${p}FileCntRename"} = 0
+			    } else {
+				delete $Info->{"${p}FileCntRename"};
+			    }
 			    $Info->{"${p}FileLinkMax"}   = 0;
 			    $Info->{"${p}Time"}          = 0;
 			    for ( my $i = 0 ; $i < 16 ; $i++ ) {
@@ -1283,7 +1295,8 @@ sub Main_Check_Job_Messages
 					  if ( $Info->{"${p}FileRepMax"} <
 					      $Info->{pool}{$p}[$i]{FileRepMax} );
 				$Info->{"${p}FileCntRename"}
-				       += $Info->{pool}{$p}[$i]{FileCntRename};
+					+= $Info->{pool}{$p}[$i]{FileCntRename}
+					  if ( $p =~ /^c?pool$/ );
 				$Info->{"${p}FileLinkMax"}
 					= $Info->{pool}{$p}[$i]{FileLinkMax}
 					  if ( $Info->{"${p}FileLinkMax"} <
@@ -1337,7 +1350,7 @@ sub Main_Check_Job_Messages
     #
     return if ( @CmdQueue || @BgQueue || @UserQueue || keys(%Jobs) > 1 );
     foreach my $host ( keys(%$Status) ) {
-        next if ( $Status->{$host}{dhcpCheckCnt} <= 0 );
+        next if ( !defined $Status->{$host}{dhcpCheckCnt} || $Status->{$host}{dhcpCheckCnt} <= 0 );
         $Status->{$host}{deadCnt} += $Status->{$host}{dhcpCheckCnt};
         $Status->{$host}{dhcpCheckCnt} = 0;
         if ( $Status->{$host}{deadCnt} >= $Conf{BlackoutBadPingLimit} ) {
@@ -1379,7 +1392,7 @@ sub Main_Check_Client_Messages
         # Process any complete lines received from this client.
         #
         while ( $Clients{$client}{mesg} =~ /(.*?)[\n\r]+(.*)/s ) {
-            my($reply);
+            my $reply;
             my $cmd = $1;
             $Clients{$client}{mesg} = $2;
             #
@@ -1457,7 +1470,12 @@ sub Main_Check_Client_Messages
             } elsif ( $cmd =~ /^backup all$/ ) {
                 QueueAllPCs();
             } elsif ( $cmd =~ /^BackupPC_nightly run$/ ) {
-                $RunNightlyWhenIdle = 1;
+                if ( $BackupPCNightlyJobs > 0 ) {
+                    print(LOG $bpc->timeStamp,
+                              "Ignoring request to run BackupPC_nightly: already running\n");
+                } else {
+                    $RunNightlyWhenIdle = 1;
+                }
             } elsif ( $cmd =~ /^backup (\S+)\s+(\S+)\s+(\S+)\s+(\S+)/ ) {
                 my $hostIP     = $1;
                 $host          = $2;
@@ -1467,8 +1485,7 @@ sub Main_Check_Client_Messages
 		$hostIP        = $bpc->uriUnesc($hostIP);
                 if ( !defined($Hosts->{$host}) ) {
                     print(LOG $bpc->timeStamp,
-                               "User $user requested backup of unknown host"
-                             . " $host\n");
+                               "User $user requested backup of unknown host $host\n");
                     $reply = "error: unknown host $host";
                 } else {
                     #
@@ -1558,8 +1575,7 @@ sub Main_Check_Client_Messages
 		$hostIP    = $bpc->uriUnesc($hostIP);
                 if ( !defined($Hosts->{$host}) ) {
                     print(LOG $bpc->timeStamp,
-                               "User $user requested restore to unknown host"
-                             . " $host");
+                               "User $user requested restore to unknown host $host\n");
                     $reply = "restore error: unknown host $host";
                 } else {
                     print(LOG $bpc->timeStamp,
@@ -1590,7 +1606,7 @@ sub Main_Check_Client_Messages
                 my $opts = $4;
                 if ( !defined($Hosts->{$host}) ) {
                     print(LOG $bpc->timeStamp,
-                               "User $user requested delete from unknown host $host");
+                               "User $user requested delete from unknown host $host\n");
                     $reply = "delete error: unknown host $host";
                 } else {
                     print(LOG $bpc->timeStamp,
@@ -1672,6 +1688,55 @@ sub Main_Check_Client_Messages
             } elsif ( $cmd =~ /^quit/ || $cmd =~ /^exit/ ) {
                 $nbytes = 0;
                 last;
+            } elsif ( $cmd =~ /^hostMutex\s+(\S+)\s+(-?\d+)\s+(.*)/ ) {
+                $host          = $1;
+                my $mutexDelta = $2;
+                my $progName   = $3;
+                if ( !defined($Hosts->{$host}) ) {
+                    print(LOG $bpc->timeStamp, "hostMutex for unknown host $host ignored: $cmd\n");
+                    $reply = "fail: hostMutex: unknown host $host";
+                } elsif ( $HostMutex{$host} == 0 || ($HostMutex{$host} > 0 && $mutexDelta > 0) ) {
+                    push(@{$Clients{$client}{hostMutexList}}, {host => $host, mutexDelta => $mutexDelta});
+                    $HostMutex{$host}       += $mutexDelta;
+                    $HostMutexCurrJob{$host} = $progName;
+                    $reply = "ok";
+                } else {
+                    print(LOG $bpc->timeStamp, "Can't run $progName while $HostMutexCurrJob{$host} is running on host $host\n");
+                    $reply = "fail: can't run $progName while $HostMutexCurrJob{$host} is running on host $host";
+                }
+            } elsif ( $cmd =~ /^hostMutexGet\s+(\S+)$/ ) {
+                $host = $1;
+                if ( !defined($Hosts->{$host}) ) {
+                    print(LOG $bpc->timeStamp, "hostMutexGet for unknown host $host ignored: $cmd\n");
+                    $reply = "fail: hostMutexGet: unknown host $host";
+                } else {
+                    $reply = "hostMutexGet: $host == $HostMutex{$host}";
+                }
+            } elsif ( $cmd =~ /^DHCP (\S+) (\S+)/ ) {
+                my $host    = $1;
+                my $newHost = $bpc->uriUnesc($2);
+                if ( !defined($Jobs{$host}) ) {
+                    print(LOG $bpc->timeStamp, "DHCP command for invalid job ignored (cmd = $cmd)\n");
+                    $reply = "fail: unknown host/job $host";
+                } elsif ( defined($Jobs{$newHost}) ) {
+                    print(LOG $bpc->timeStamp, "Backup on $newHost is already running (DHCP command = $cmd)\n");
+                    $reply = "fail: newhost $newHost already has a job running (cmd = $cmd)";
+                } else {
+                    $Jobs{$host}{dhcpHostIP} = $host;
+                    $Status->{$newHost}{dhcpHostIP} = $host;
+                    $Jobs{$newHost} = $Jobs{$host};
+                    $HostMutex{$newHost} = $HostMutex{$host};
+                    $HostMutexCurrJob{$newHost} = $HostMutexCurrJob{$host};
+                    delete($Jobs{$host});
+                    delete($HostMutex{$host});
+                    delete($HostMutexCurrJob{$host});
+                    $host = $newHost;
+                    $Status->{$host}{state}      = "Status_backup_starting";
+                    $Status->{$host}{activeJob}  = 1;
+                    $Status->{$host}{startTime}  = $Jobs{$host}{startTime};
+                    $Status->{$host}{endTime}    = "";
+                    $Jobs{$host}{dhcp}           = 0;
+                }
             } else {
                 print(LOG $bpc->timeStamp, "Unknown command $cmd\n");
                 $reply = "error: bad command $cmd";
@@ -1679,7 +1744,7 @@ sub Main_Check_Client_Messages
             #
             # send a reply to the client, at a minimum "ok\n".
             #
-            $reply = "ok" if ( $reply eq "" );
+            $reply = "ok" if ( !defined $reply );
             $reply .= "\n";
             syswrite($Clients{$client}{fh}, $reply, length($reply));
         }
@@ -1700,6 +1765,11 @@ sub Main_Check_Client_Messages
         if ( $nbytes <= 0 ) {
             close($Clients{$client}{fh});
             vec($FDread, $Clients{$client}{fn}, 1) = 0;
+            if ( defined($Clients{$client}{hostMutexList}) ) {
+                foreach my $d ( @{$Clients{$client}{hostMutexList}} ) {
+                    $HostMutex{$d->{host}} -= $d->{mutexDelta};
+                }
+            }
             delete($Clients{$client});
         }
     }
