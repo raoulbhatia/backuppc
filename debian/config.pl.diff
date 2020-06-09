@@ -16,7 +16,7 @@
  # Full path to various commands for archiving
  #
  $Conf{SplitPath} = '/usr/bin/split';
--$Conf{ParPath}   = '';
+-$Conf{ParPath}   = '/usr/bin/par2';
 +$Conf{ParPath}   = '/usr/bin/par2' if -x '/usr/bin/par2';
  $Conf{CatPath}   = '/bin/cat';
  $Conf{GzipPath}  = '/bin/gzip';
