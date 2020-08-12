@@ -10,7 +10,7 @@
 #   Craig Barratt  <cbarratt@users.sourceforge.net>
 #
 # COPYRIGHT
-#   Copyright (C) 2003-2018  Craig Barratt
+#   Copyright (C) 2003-2020  Craig Barratt
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 #
 #========================================================================
 #
-# Version 4.2.2, released 21 Oct 2018.
+# Version 4.3.3, released 6 Jun 2020.
 #
 # See http://backuppc.sourceforge.net.
 #
@@ -36,6 +36,7 @@
 package BackupPC::CGI::HostInfo;
 
 use strict;
+use Encode qw/decode_utf8/;
 use BackupPC::CGI::Lib qw(:all);
 
 sub action
@@ -46,25 +47,24 @@ sub action
     $host =~ s/^\s+//;
     $host =~ s/\s+$//;
     if ( $host eq "" ) {
-	ErrorExit(eval("qq{$Lang->{Unknown_host_or_user}}"));
+        ErrorExit(eval("qq{$Lang->{Unknown_host_or_user}}"));
     }
     $host = lc($host)
-               if ( !-d "$TopDir/pc/$host" && -d "$TopDir/pc/" . lc($host) );
+      if ( !-d "$TopDir/pc/$host" && -d "$TopDir/pc/" . lc($host) );
     if ( $host =~ /\.\./ || !-d "$TopDir/pc/$host" ) {
         #
         # try to lookup by user name
         #
         if ( $host eq "" || !defined($Hosts->{$host}) ) {
             foreach my $h ( keys(%$Hosts) ) {
-                if ( $Hosts->{$h}{user} eq $host
-                        || lc($Hosts->{$h}{user}) eq lc($host) ) {
+                if ( $Hosts->{$h}{user} eq $host || lc($Hosts->{$h}{user}) eq lc($host) ) {
                     $host = $h;
                     last;
                 }
             }
             CheckPermission();
             ErrorExit(eval("qq{$Lang->{Unknown_host_or_user}}"))
-                               if ( !defined($Hosts->{$host}) );
+              if ( !defined($Hosts->{$host}) );
         }
         $In{host} = $host;
     }
@@ -75,22 +75,44 @@ sub action
     if ( !$Privileged ) {
         ErrorExit(eval("qq{$Lang->{Only_privileged_users_can_view_information_about}}"));
     }
+    if ( $In{action} eq "keepBackup" ) {
+        my $num  = $In{num};
+        my $keep = $In{keep};
+        my $i;
+        if ( $num !~ /^\d+$/ ) {
+            ErrorExit("Backup number ${EscHTML($In{num})} for host ${EscHTML($host)} does not exist.");
+        }
+        my @Backups = $bpc->BackupInfoRead($host);
+        for ( $i = 0 ; $i < @Backups ; $i++ ) {
+            if ( $Backups[$i]{num} == $num ) {
+                if ( !$Backups[$i]{noFill} && $Backups[$i]{keep} != ($keep ? 1 : 0) ) {
+                    $Backups[$i]{keep} = $keep ? 1 : 0;
+                    $bpc->BackupInfoWrite($host, @Backups);
+                    BackupPC::Storage->backupInfoWrite("$TopDir/pc/$host", $Backups[$i]{num}, $Backups[$i], 1);
+                }
+                last;
+            }
+        }
+        if ( $i >= @Backups ) {
+            ErrorExit("Backup number ${EscHTML($In{num})} for host ${EscHTML($host)} does not exist.");
+        }
+    }
     my $deleteEnabled = $PrivAdmin || ($Conf{CgiUserDeleteBackupEnable} > 0 && $Privileged);
     $deleteEnabled = 0 if ( $Conf{CgiUserDeleteBackupEnable} < 0 );
     ReadUserEmailInfo();
 
     if ( $Conf{XferMethod} eq "archive" ) {
         my @Archives = $bpc->ArchiveInfoRead($host);
-        my ($ArchiveStr,$warnStr);
+        my($ArchiveStr, $warnStr);
 
         for ( my $i = 0 ; $i < @Archives ; $i++ ) {
             my $startTime = timeStamp2($Archives[$i]{startTime});
             my $dur       = $Archives[$i]{endTime} - $Archives[$i]{startTime};
-            $dur          = 1 if ( $dur <= 0 );
-            my $duration  = sprintf("%.1f", $dur / 60);
+            $dur = 1 if ( $dur <= 0 );
+            my $duration        = sprintf("%.1f", $dur / 60);
             my $Archives_Result = $Lang->{failed};
-            if ($Archives[$i]{result} ne "failed") { $Archives_Result = $Lang->{success}; }
-            $ArchiveStr  .= <<EOF;
+            if ( $Archives[$i]{result} ne "failed" ) { $Archives_Result = $Lang->{success}; }
+            $ArchiveStr .= <<EOF;
 <tr><td align="center"><a href="$MyURL?action=archiveInfo&num=$Archives[$i]{num}&host=${EscURI($host)}">$Archives[$i]{num}</a> </td>
     <td align="center"> $Archives_Result </td>
     <td align="right" data-date_format="$Conf{CgiDateFormatMMDD}"> $startTime </td>
@@ -138,46 +160,57 @@ EOF
         #
         $Backups[$i]{type} = "partial" if ( $Backups[$i]{type} eq "active" && !defined($StatusHost{Job}) );
         if ( $Backups[$i]{type} ne "active" ) {
-            $dur       = $Backups[$i]{endTime} - $Backups[$i]{startTime};
-            $dur          = 1 if ( $dur <= 0 );
-            $duration  = sprintf("%.1f", $dur / 60);
-            $MB        = sprintf("%.1f", $Backups[$i]{size} / (1024*1024));
-            $MBperSec  = sprintf("%.2f", $Backups[$i]{size} / (1024*1024*$dur));
-            $MBExist   = sprintf("%.1f", $Backups[$i]{sizeExist} / (1024*1024));
-            $MBNew     = sprintf("%.1f", $Backups[$i]{sizeNew} / (1024*1024));
+            $dur      = $Backups[$i]{endTime} - $Backups[$i]{startTime};
+            $dur      = 1 if ( $dur <= 0 );
+            $duration = sprintf("%.1f", $dur / 60);
+            $MB       = sprintf("%.1f", $Backups[$i]{size} / (1024 * 1024));
+            $MBperSec = sprintf("%.2f", $Backups[$i]{size} / (1024 * 1024 * $dur));
+            $MBExist  = sprintf("%.1f", $Backups[$i]{sizeExist} / (1024 * 1024));
+            $MBNew    = sprintf("%.1f", $Backups[$i]{sizeNew} / (1024 * 1024));
             if ( $Backups[$i]{sizeExist} && $Backups[$i]{sizeExistComp} ) {
-                $MBExistComp = sprintf("%.1f", $Backups[$i]{sizeExistComp}
-                                                    / (1024 * 1024));
-                $ExistComp = sprintf("%.1f%%", 100 *
-                      (1 - $Backups[$i]{sizeExistComp} / $Backups[$i]{sizeExist}));
+                $MBExistComp = sprintf("%.1f",   $Backups[$i]{sizeExistComp} / (1024 * 1024));
+                $ExistComp   = sprintf("%.1f%%", 100 * (1 - $Backups[$i]{sizeExistComp} / $Backups[$i]{sizeExist}));
             }
             if ( $Backups[$i]{sizeNew} && $Backups[$i]{sizeNewComp} ) {
-                $MBNewComp = sprintf("%.1f", $Backups[$i]{sizeNewComp}
-                                                    / (1024 * 1024));
-                $NewComp = sprintf("%.1f%%", 100 *
-                      (1 - $Backups[$i]{sizeNewComp} / $Backups[$i]{sizeNew}));
+                $MBNewComp = sprintf("%.1f",   $Backups[$i]{sizeNewComp} / (1024 * 1024));
+                $NewComp   = sprintf("%.1f%%", 100 * (1 - $Backups[$i]{sizeNewComp} / $Backups[$i]{sizeNew}));
             }
         }
-        my $age = sprintf("%.1f", (time - $Backups[$i]{startTime}) / (24*3600));
+        my $age       = sprintf("%.1f", (time - $Backups[$i]{startTime}) / (24 * 3600));
         my $browseURL = "$MyURL?action=browse&host=${EscURI($host)}&num=$Backups[$i]{num}";
-        my $level  = $Backups[$i]{level};
-        my $filled = $Backups[$i]{noFill} ? $Lang->{No} : $Lang->{Yes};
+        my $level     = $Backups[$i]{level};
+        my $filled    = $Backups[$i]{noFill} ? $Lang->{No} : $Lang->{Yes};
         $filled .= " ($Backups[$i]{fillFromNum}) "
-                            if ( $Backups[$i]{fillFromNum} ne "" );
-        my $ltype = $Lang->{"backupType_$Backups[$i]{type}"};
-        my $deleteStr;
-        if ( $deleteEnabled ) {
-            $deleteStr = <<EOF;
-    <td align="center" class="border"><form name="DeleteForm" action="$MyURL" method="get" style="margin-bottom: 0px;">
+          if ( $Backups[$i]{fillFromNum} ne "" );
+        my $ltype           = $Lang->{"backupType_$Backups[$i]{type}"};
+        my $keepOrDeleteStr = "    <td class=\"border\">\n";
+
+        if ( !$Backups[$i]{noFill} && ($i < @Backups - 1 || $Backups[$i]{type} eq "full") ) {
+            my $keepChecked = $Backups[$i]{keep} ? " checked" : "";
+            $keepOrDeleteStr .= <<EOF;
+      <form name="KeepForm" action="$MyURL" method="get" style="margin: 0px;">
+        <input type="checkbox" name="keep"   $keepChecked value="1" onchange="this.form.submit()">
+        <input type="hidden"   name="num"    value="$Backups[$i]{num}">
+        <input type="hidden"   name="action" value="keepBackup">
+        <input type="hidden"   name="host"   value="$host">
+      </form><span style="display:none">$Backups[$i]{keep}<!- for sorting -></span></td>
+EOF
+        }
+        $keepOrDeleteStr .= "    </td>\n    <td class=\"border\">\n";
+        if ( (!$Backups[$i]{keep} || $Backups[$i]{noFill}) && $deleteEnabled ) {
+            $keepOrDeleteStr .= <<EOF;
+      <form name="DeleteForm" action="$MyURL" method="get" style="margin: 0px;">
         <input type="hidden" name="action" value="deleteBackup">
         <input type="hidden" name="host"   value="$host">
         <input type="hidden" name="num"    value="$Backups[$i]{num}">
         <input type="hidden" name="nofill" value="$Backups[$i]{noFill}">
         <input type="hidden" name="type"   value="$Backups[$i]{type}">
         <input type="submit" value="${EscHTML($Lang->{CfgEdit_Button_Delete})}">
-    </form></td>
+      </form>
 EOF
         }
+        $keepOrDeleteStr .= "    </td>\n";
+        my $comment = decode_utf8($Backups[$i]{comment});
         push @bkpRows, <<EOF;
 <tr>
     <td align="center" class="border"> <a href="$browseURL">$Backups[$i]{num}</a> </td>
@@ -187,8 +220,8 @@ EOF
     <td align="right" class="border" data-date_format="$Conf{CgiDateFormatMMDD}"> $startTime </td>
     <td align="right" class="border">  $duration </td>
     <td align="right" class="border">  $age </td>
-    $deleteStr
-    <td align="left" class="border">   <tt>$TopDir/pc/$host/$Backups[$i]{num}</tt> </td></tr>
+    $keepOrDeleteStr
+    <td align="left" class="border">   $comment </td></tr>
 EOF
         push @sizeRows, <<EOF;
 <tr><td align="center" class="border"> <a href="$browseURL">$Backups[$i]{num}</a> </td>
@@ -203,8 +236,8 @@ EOF
 </tr>
 EOF
         my $is_compress = $Backups[$i]{compress} || $Lang->{off};
-        if (! $ExistComp) { $ExistComp = "&nbsp;"; }
-        if (! $MBExistComp) { $MBExistComp = "&nbsp;"; }
+        if ( !$ExistComp )   { $ExistComp   = "&nbsp;"; }
+        if ( !$MBExistComp ) { $MBExistComp = "&nbsp;"; }
         push @compRows, <<EOF;
 <tr><td align="center" class="border"> <a href="$browseURL">$Backups[$i]{num}</a> </td>
     <td align="center" class="border"> $ltype </td>
@@ -228,10 +261,11 @@ EOF
     <td align="right" class="border">  $Backups[$i]{tarErrs} </td></tr>
 EOF
     }
-    my $str = join("\n", reverse(@bkpRows));
+
+    my $str     = join("\n", reverse(@bkpRows));
     my $sizeStr = join("\n", reverse(@sizeRows));
     my $compStr = join("\n", reverse(@compRows));
-    my $errStr = join("\n", reverse(@errRows));
+    my $errStr  = join("\n", reverse(@errRows));
     my $warnStr = join("\n", reverse(@warnRows));
 
     my @Restores = $bpc->RestoreInfoRead($host);
@@ -240,12 +274,12 @@ EOF
     for ( my $i = 0 ; $i < @Restores ; $i++ ) {
         my $startTime = timeStamp2($Restores[$i]{startTime});
         my $dur       = $Restores[$i]{endTime} - $Restores[$i]{startTime};
-        $dur          = 1 if ( $dur <= 0 );
-        my $duration  = sprintf("%.1f", $dur / 60);
-        my $MB        = sprintf("%.1f", $Restores[$i]{size} / (1024*1024));
-        my $MBperSec  = sprintf("%.2f", $Restores[$i]{size} / (1024*1024*$dur));
+        $dur = 1 if ( $dur <= 0 );
+        my $duration = sprintf("%.1f", $dur / 60);
+        my $MB       = sprintf("%.1f", $Restores[$i]{size} / (1024 * 1024));
+        my $MBperSec = sprintf("%.2f", $Restores[$i]{size} / (1024 * 1024 * $dur));
         my $Restores_Result = $Lang->{failed};
-        if ($Restores[$i]{result} ne "failed") { $Restores_Result = $Lang->{success}; }
+        if ( $Restores[$i]{result} ne "failed" ) { $Restores_Result = $Lang->{success}; }
         push @restoreRows, <<EOF;
 <tr><td align="center" class="border"><a href="$MyURL?action=restoreInfo&num=$Restores[$i]{num}&host=${EscURI($host)}">$Restores[$i]{num}</a> </td>
     <td align="center" class="border"> $Restores_Result </td>
@@ -266,7 +300,7 @@ EOF
         $warnStr = $Lang->{This_PC_has_never_been_backed_up};
     }
     if ( defined($Hosts->{$host}) ) {
-        my $user = $Hosts->{$host}{user};
+        my $user      = $Hosts->{$host}{user};
         my @moreUsers = sort(keys(%{$Hosts->{$host}{moreUsers}}));
         my $moreUserStr;
         foreach my $u ( sort(keys(%{$Hosts->{$host}{moreUsers}})) ) {
@@ -281,21 +315,21 @@ EOF
         if ( $user ne "" ) {
             $statusStr .= eval("qq{$Lang->{This_PC_is_used_by}$moreUserStr}");
         }
-        if ( defined($UserEmailInfo{$user})
-                && defined($UserEmailInfo{$user}{$host})
-                && defined($UserEmailInfo{$user}{$host}{lastSubj}) ) {
+        if (   defined($UserEmailInfo{$user})
+            && defined($UserEmailInfo{$user}{$host})
+            && defined($UserEmailInfo{$user}{$host}{lastSubj}) ) {
             my $mailTime = timeStamp2($UserEmailInfo{$user}{$host}{lastTime});
             my $subj     = $UserEmailInfo{$user}{$host}{lastSubj};
-            $statusStr  .= eval("qq{$Lang->{Last_email_sent_to__was_at___subject}}");
+            $statusStr .= eval("qq{$Lang->{Last_email_sent_to__was_at___subject}}");
         } elsif ( defined($UserEmailInfo{$user})
-                && $UserEmailInfo{$user}{lastHost} eq $host
-                && defined($UserEmailInfo{$user}{lastSubj}) ) {
+            && $UserEmailInfo{$user}{lastHost} eq $host
+            && defined($UserEmailInfo{$user}{lastSubj}) ) {
             #
             # Old format %UserEmailInfo - pre 3.2.0.
             #
             my $mailTime = timeStamp2($UserEmailInfo{$user}{lastTime});
             my $subj     = $UserEmailInfo{$user}{lastSubj};
-            $statusStr  .= eval("qq{$Lang->{Last_email_sent_to__was_at___subject}}");
+            $statusStr .= eval("qq{$Lang->{Last_email_sent_to__was_at___subject}}");
         }
     }
     if ( defined($StatusHost{Job}) ) {
@@ -312,17 +346,16 @@ EOF
     if ( $StatusHost{CmdQueueOn} ) {
         $statusStr .= eval("qq{$Lang->{A_command_for_host_is_on_the_command_queue_will_run_soon}}");
     }
-    my $startTime = timeStamp2($StatusHost{endTime} == 0 ?
-                $StatusHost{startTime} : $StatusHost{endTime});
-    my $reason = "";
+    my $startTime = timeStamp2($StatusHost{endTime} == 0 ? $StatusHost{startTime} : $StatusHost{endTime});
+    my $reason    = "";
     if ( $StatusHost{reason} ne "" ) {
         $reason = " ($Lang->{$StatusHost{reason}})";
     }
     $statusStr .= eval("qq{$Lang->{Last_status_is_state_StatusHost_state_reason_as_of_startTime}}");
 
-    if ( $StatusHost{state} ne "Status_backup_in_progress"
-            && $StatusHost{state} ne "Status_restore_in_progress"
-            && $StatusHost{error} ne "" ) {
+    if (   $StatusHost{state} ne "Status_backup_in_progress"
+        && $StatusHost{state} ne "Status_restore_in_progress"
+        && $StatusHost{error} ne "" ) {
         $statusStr .= eval("qq{$Lang->{Last_error_is____EscHTML_StatusHost_error}}");
     }
     my $priorStr = "Pings";
@@ -333,20 +366,21 @@ EOF
     if ( $StatusHost{aliveCnt} > 0 ) {
         $statusStr .= eval("qq{$Lang->{priorStr_to_host_have_succeeded_StatusHostaliveCnt_consecutive_times}}");
 
-        if ( (@{$Conf{BlackoutPeriods}} || defined($Conf{BlackoutHourBegin}))
-		&& $StatusHost{aliveCnt} >= $Conf{BlackoutGoodCnt}
-                && $Conf{BlackoutGoodCnt} >= 0 ) {
+        if (   (@{$Conf{BlackoutPeriods}} || defined($Conf{BlackoutHourBegin}))
+            && $StatusHost{aliveCnt} >= $Conf{BlackoutGoodCnt}
+            && $Conf{BlackoutGoodCnt} >= 0 ) {
             #
             # Handle backward compatibility with original separate scalar
             # blackout parameters.
             #
             if ( defined($Conf{BlackoutHourBegin}) ) {
-                push(@{$Conf{BlackoutPeriods}},
-                     {
-                         hourBegin => $Conf{BlackoutHourBegin},
-                         hourEnd   => $Conf{BlackoutHourEnd},
-                         weekDays  => $Conf{BlackoutWeekDays},
-                     }
+                push(
+                    @{$Conf{BlackoutPeriods}},
+                    {
+                        hourBegin => $Conf{BlackoutHourBegin},
+                        hourEnd   => $Conf{BlackoutHourEnd},
+                        weekDays  => $Conf{BlackoutWeekDays},
+                    }
                 );
             }
 
@@ -359,15 +393,10 @@ EOF
             my $blackoutStr;
             my $periodCnt = 0;
             foreach my $p ( @{$Conf{BlackoutPeriods}} ) {
-                next if ( ref($p->{weekDays}) ne "ARRAY"
-                            || !defined($p->{hourBegin})
-                            || !defined($p->{hourEnd})
-                        );
+                next if ( ref($p->{weekDays}) ne "ARRAY" || !defined($p->{hourBegin}) || !defined($p->{hourEnd}) );
                 my $days = join(", ", @days[@{$p->{weekDays}}]);
-                my $t0   = sprintf("%d:%02d", $p->{hourBegin},
-                              60 * ($p->{hourBegin} - int($p->{hourBegin})));
-                my $t1   = sprintf("%d:%02d", $p->{hourEnd},
-                              60 * ($p->{hourEnd} - int($p->{hourEnd})));
+                my $t0   = sprintf("%d:%02d", $p->{hourBegin}, 60 * ($p->{hourBegin} - int($p->{hourBegin})));
+                my $t1   = sprintf("%d:%02d", $p->{hourEnd}, 60 * ($p->{hourEnd} - int($p->{hourEnd})));
                 if ( $periodCnt ) {
                     $blackoutStr .= ", ";
                     if ( $periodCnt == @{$Conf{BlackoutPeriods}} - 1 ) {
@@ -375,11 +404,12 @@ EOF
                         $blackoutStr .= " ";
                     }
                 }
-                $blackoutStr
-                        .= eval("qq{$Lang->{__time0_to__time1_on__days}}");
+                $blackoutStr .= eval("qq{$Lang->{__time0_to__time1_on__days}}");
                 $periodCnt++;
             }
-            $statusStr .= eval("qq{$Lang->{Because__host_has_been_on_the_network_at_least__Conf_BlackoutGoodCnt_consecutive_times___}}");
+            $statusStr .= eval(
+                "qq{$Lang->{Because__host_has_been_on_the_network_at_least__Conf_BlackoutGoodCnt_consecutive_times___}}"
+            );
         }
     }
     if ( $StatusHost{backoffTime} > time ) {
@@ -391,6 +421,7 @@ EOF
         $statusStr .= "<li>${EscHTML($Conf{ClientComment})}\n";
     }
     if ( @Backups ) {
+
         # only allow incremental if there are already some backups
         $startIncrStr = <<EOF;
 <input type="button" value="$Lang->{Start_Incr_Backup}"

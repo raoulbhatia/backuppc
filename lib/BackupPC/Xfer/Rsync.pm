@@ -30,7 +30,7 @@
 #
 #========================================================================
 #
-# Version 4.3.2, released 19 Jan 2020.
+# Version 4.3.3, released 12 Jun 2020.
 #
 # See http://backuppc.sourceforge.net.
 #
@@ -57,11 +57,11 @@ sub new
 
 sub start
 {
-    my($t) = @_;
-    my $bpc = $t->{bpc};
+    my($t)   = @_;
+    my $bpc  = $t->{bpc};
     my $conf = $t->{conf};
     my(@fileList, $rsyncArgs, $logMsg, $rsyncCmd);
-    my $binDir = $t->{bpc}->BinDir();
+    my $binDir        = $t->{bpc}->BinDir();
     my $shareNamePath = $t->shareName2Path($t->{shareName});
 
     alarm(0);
@@ -71,8 +71,8 @@ sub start
     ($t->{shareNameSlash} = "$shareNamePath/") =~ s{//+$}{/};
 
     if ( $t->{type} eq "restore" ) {
-	my $remoteDir = "$shareNamePath/$t->{pathHdrDest}";
-	$remoteDir    =~ s{//+}{/}g;
+        my $remoteDir = "$shareNamePath/$t->{pathHdrDest}";
+        $remoteDir =~ s{//+}{/}g;
         my $filesFd;
         my $srcList;
         my $srcDir = "/";
@@ -80,6 +80,9 @@ sub start
         #from_to($remoteDir, "utf8", $conf->{ClientCharset})
         #                            if ( $conf->{ClientCharset} ne "" );
         $rsyncArgs = [@{$conf->{RsyncRestoreArgs}}];
+        if ( ref($conf->{RsyncRestoreArgsExtra}) eq 'ARRAY' ) {
+            push(@$rsyncArgs, @{$conf->{RsyncRestoreArgsExtra}});
+        }
 
         #
         # Each name in the fileList starts with $t->{pathHdrSrc}.  The
@@ -105,7 +108,7 @@ sub start
                 $t->{fileList}[$i] = substr($t->{fileList}[$i], length($t->{pathHdrSrc}));
                 $t->{fileList}[$i] = "." if ( $t->{fileList}[$i] eq "" );
             }
-            $srcDir = $t->{pathHdrSrc} if ($t->{pathHdrSrc});
+            $srcDir = $t->{pathHdrSrc} if ( $t->{pathHdrSrc} );
             $t->{XferLOG}->write(\"Trimming $t->{pathHdrSrc} from filesList\n");
         }
 
@@ -123,9 +126,9 @@ sub start
 
         if ( $t->{XferMethod} eq "rsync" ) {
             unshift(@$rsyncArgs, "--rsync-path=$conf->{RsyncClientPath}")
-                            if ( $conf->{RsyncClientPath} ne "" );
+              if ( $conf->{RsyncClientPath} ne "" );
             unshift(@$rsyncArgs, @{$conf->{RsyncSshArgs}})
-                            if ( ref($conf->{RsyncSshArgs}) eq 'ARRAY' );
+              if ( ref($conf->{RsyncSshArgs}) eq 'ARRAY' );
             push(@$rsyncArgs, @$srcList, "$t->{hostIP}:$remoteDir");
         } else {
             if ( length($conf->{RsyncdPasswd}) ) {
@@ -145,32 +148,34 @@ sub start
                     return;
                 }
             }
+
             #my $shareName = $t->{shareName};
             #from_to($shareName, "utf8", $conf->{ClientCharset})
             #                    if ( $conf->{ClientCharset} ne "" );
             if ( $conf->{RsyncdClientPort} != 873 ) {
                 push(@$rsyncArgs, "--port=$conf->{RsyncdClientPort}");
             }
-            if ( $conf->{ClientCharset} ne "" ) {
+            if ( $conf->{ClientCharset} ne "" && $conf->{ClientCharset} ne "utf8" ) {
                 push(@$rsyncArgs, "--iconv=utf8,$conf->{ClientCharset}");
             }
-            push(@$rsyncArgs,
-                    @$srcList,
-                    "$conf->{RsyncdUserName}\@$t->{hostIP}::$remoteDir");
+            push(@$rsyncArgs, @$srcList, "$conf->{RsyncdUserName}\@$t->{hostIP}::$remoteDir");
         }
 
         #
         # Merge variables into $rsyncArgs
         #
-        $rsyncArgs = $bpc->cmdVarSubstitute($rsyncArgs, {
-                            host          => $t->{host},
-                            hostIP        => $t->{hostIP},
-                            client        => $t->{client},
-                            shareNameOrig => $t->{shareName},
-                            shareName     => $shareNamePath,
-                            confDir       => $conf->{ConfDir},
-                            sshPath       => $conf->{SshPath},
-                        });
+        $rsyncArgs = $bpc->cmdVarSubstitute(
+            $rsyncArgs,
+            {
+                host          => $t->{host},
+                hostIP        => $t->{hostIP},
+                client        => $t->{client},
+                shareNameOrig => $t->{shareName},
+                shareName     => $shareNamePath,
+                confDir       => $conf->{ConfDir},
+                sshPath       => $conf->{SshPath},
+            }
+        );
         #
         # create --bpc-bkup-merge list.  This is the list of backups that have to
         # be merged to create the correct "view" of the backup being restore.
@@ -209,29 +214,30 @@ sub start
         }
         foreach my $i ( @$mergeIdxList ) {
             $mergeInfo .= "," if ( length($mergeInfo) );
-            $mergeInfo .= sprintf("%d/%d/%d", $t->{backups}[$i]{num}, $t->{backups}[$i]{compress}, int($t->{backups}[$i]{version}));
+            $mergeInfo .=
+              sprintf("%d/%d/%d", $t->{backups}[$i]{num}, $t->{backups}[$i]{compress}, int($t->{backups}[$i]{version}));
         }
 
-        unshift(@$rsyncArgs,
-            '--bpc-top-dir',        $conf->{TopDir},
-            '--bpc-host-name',      $t->{bkupSrcHost},
-            '--bpc-share-name',     $t->{bkupSrcShare},
-            '--bpc-bkup-num',       $t->{backups}[$srcIdx]{num},
-            '--bpc-bkup-comp',      $t->{backups}[$srcIdx]{compress},
-            '--bpc-bkup-merge',     $mergeInfo,
+        unshift(
+            @$rsyncArgs,
+            '--bpc-top-dir',    $conf->{TopDir},                    # perltidy protect
+            '--bpc-host-name',  $t->{bkupSrcHost},
+            '--bpc-share-name', $t->{bkupSrcShare},
+            '--bpc-bkup-num',   $t->{backups}[$srcIdx]{num},
+            '--bpc-bkup-comp',  $t->{backups}[$srcIdx]{compress},
+            '--bpc-bkup-merge', $mergeInfo,
+            '--bpc-log-level',  $conf->{XferLogLevel},
             '--bpc-attrib-new',
-            '--bpc-log-level',      $conf->{XferLogLevel},
         );
 
-        $logMsg = "restore started below directory $t->{shareName}"
-		. " to host $t->{host}";
+        $logMsg = "restore started below directory $t->{shareName} to host $t->{host}";
     } else {
-	#
-	# Turn $conf->{BackupFilesOnly} and $conf->{BackupFilesExclude}
-	# into a hash of arrays of files, and $conf->{RsyncShareName}
-	# to an array
-	#
-	$bpc->backupFileConfFix($conf, "RsyncShareName");
+        #
+        # Turn $conf->{BackupFilesOnly} and $conf->{BackupFilesExclude}
+        # into a hash of arrays of files, and $conf->{RsyncShareName}
+        # to an array
+        #
+        $bpc->backupFileConfFix($conf, "RsyncShareName");
 
         if ( defined($conf->{BackupFilesOnly}{$t->{shareName}}) ) {
             my(@inc, @exc, %incDone, %excDone);
@@ -257,14 +263,14 @@ sub start
                 $file =~ s{/$}{};
                 $file = "/$file";
                 $file =~ s{//+}{/}g;
-		if ( $file eq "/" ) {
-		    #
-		    # This is a special case: if the user specifies
-		    # "/" then just include it and don't exclude "/*".
-		    #
+                if ( $file eq "/" ) {
+                    #
+                    # This is a special case: if the user specifies
+                    # "/" then just include it and don't exclude "/*".
+                    #
                     push(@inc, $file) if ( !$incDone{$file} );
-		    next;
-		}
+                    next;
+                }
                 my $f = "";
                 while ( $file =~ m{^/([^/]*)(.*)} ) {
                     my $elt = $1;
@@ -274,7 +280,7 @@ sub start
                         # preserve a tailing slash
                         #
                         $file = "";
-                        $elt = "$elt/";
+                        $elt  = "$elt/";
                     }
                     push(@exc, "$f/*") if ( !$excDone{"$f/*"} );
                     $excDone{"$f/*"} = 1;
@@ -285,12 +291,12 @@ sub start
             }
             foreach my $file ( @inc ) {
                 $file = encode($conf->{ClientCharset}, $file)
-                            if ( $conf->{ClientCharset} ne "" );
+                  if ( $conf->{ClientCharset} ne "" );
                 push(@fileList, "--include=$file");
             }
             foreach my $file ( @exc ) {
                 $file = encode($conf->{ClientCharset}, $file)
-                            if ( $conf->{ClientCharset} ne "" );
+                  if ( $conf->{ClientCharset} ne "" );
                 push(@fileList, "--exclude=$file");
             }
         }
@@ -301,7 +307,7 @@ sub start
                 #
                 my $file = $file2;
                 $file = encode($conf->{ClientCharset}, $file)
-                            if ( $conf->{ClientCharset} ne "" );
+                  if ( $conf->{ClientCharset} ne "" );
                 push(@fileList, "--exclude=$file");
             }
         }
@@ -333,13 +339,13 @@ sub start
                 push(@$rsyncArgs, $conf->{RsyncIncrArgsExtra});
             }
         }
-        
+
         #
         # Add any additional rsync args
         #
         push(@$rsyncArgs, @{$conf->{RsyncArgsExtra}})
-                    if ( ref($conf->{RsyncArgsExtra}) eq 'ARRAY' );
-        if ( $conf->{ClientCharset} ne "" ) {
+          if ( ref($conf->{RsyncArgsExtra}) eq 'ARRAY' );
+        if ( $conf->{ClientCharset} ne "" && $conf->{ClientCharset} ne "utf8" ) {
             push(@$rsyncArgs, "--iconv=utf8,$conf->{ClientCharset}");
         }
         if ( $conf->{ClientTimeout} > 0 && $conf->{ClientTimeout} =~ /^\d+$/ ) {
@@ -348,9 +354,9 @@ sub start
 
         if ( $t->{XferMethod} eq "rsync" ) {
             unshift(@$rsyncArgs, "--rsync-path=$conf->{RsyncClientPath}")
-                            if ( $conf->{RsyncClientPath} ne "" );
+              if ( $conf->{RsyncClientPath} ne "" );
             unshift(@$rsyncArgs, @{$conf->{RsyncSshArgs}})
-                            if ( ref($conf->{RsyncSshArgs}) eq 'ARRAY' );
+              if ( ref($conf->{RsyncSshArgs}) eq 'ARRAY' );
         } else {
             if ( $conf->{RsyncdClientPort} != 873 ) {
                 push(@$rsyncArgs, "--port=$conf->{RsyncdClientPort}");
@@ -360,18 +366,22 @@ sub start
         #
         # Merge variables into $rsyncArgs
         #
-        $rsyncArgs = $bpc->cmdVarSubstitute($rsyncArgs, {
-                            host          => $t->{host},
-                            hostIP        => $t->{hostIP},
-                            client        => $t->{client},
-                            shareNameOrig => $t->{shareName},
-                            shareName     => $shareNamePath,
-                            confDir       => $conf->{ConfDir},
-                            sshPath       => $conf->{SshPath},
-                        });
+        $rsyncArgs = $bpc->cmdVarSubstitute(
+            $rsyncArgs,
+            {
+                host          => $t->{host},
+                hostIP        => $t->{hostIP},
+                client        => $t->{client},
+                shareNameOrig => $t->{shareName},
+                shareName     => $shareNamePath,
+                confDir       => $conf->{ConfDir},
+                sshPath       => $conf->{SshPath},
+            }
+        );
 
         if ( $t->{XferMethod} eq "rsync" ) {
             my $shareNameSlash = $t->{shareNameSlash};
+
             #from_to($shareNameSlash, "utf8", $conf->{ClientCharset})
             #                    if ( $conf->{ClientCharset} ne "" );
 
@@ -397,36 +407,36 @@ sub start
                 return;
             }
             my $shareName = $shareNamePath;
+
             #from_to($shareName, "utf8", $conf->{ClientCharset})
             #                    if ( $conf->{ClientCharset} ne "" );
             push(@$rsyncArgs, @fileList) if ( @fileList );
-            push(@$rsyncArgs,
-                    "$conf->{RsyncdUserName}\@$t->{hostIP}::$shareName",
-                    "/");
+            push(@$rsyncArgs, "$conf->{RsyncdUserName}\@$t->{hostIP}::$shareName", "/");
         }
         if ( $bpc->{PoolV3} ) {
             unshift(@$rsyncArgs,
-                    '--bpc-hardlink-max',  $conf->{HardLinkMax} || 31999,
-                    '--bpc-v3pool-used',   $conf->{PoolV3Enabled},
+                '--bpc-hardlink-max', $conf->{HardLinkMax} || 31999,
+                '--bpc-v3pool-used',  $conf->{PoolV3Enabled},
             );
         }
 
-	my $inode0 = 1;
+        my $inode0 = 1;
         for ( my $i = 0 ; $i < @{$t->{backups}} ; $i++ ) {
             $inode0 = $t->{backups}[$i]{inodeLast} + 1 if ( $inode0 <= $t->{backups}[$i]{inodeLast} );
         }
 
-        unshift(@$rsyncArgs,
-            '--bpc-top-dir',        $conf->{TopDir},
-            '--bpc-host-name',      $t->{client},
-            '--bpc-share-name',     $t->{shareName},
-            '--bpc-bkup-num',       $t->{backups}[$t->{newBkupIdx}]{num},
-            '--bpc-bkup-comp',      $t->{backups}[$t->{newBkupIdx}]{compress},
-            '--bpc-bkup-prevnum',   defined($t->{lastBkupIdx}) ? $t->{backups}[$t->{lastBkupIdx}]{num} : -1,
-            '--bpc-bkup-prevcomp',  defined($t->{lastBkupIdx}) ? $t->{backups}[$t->{lastBkupIdx}]{compress} : -1,
-            '--bpc-bkup-inode0',    $inode0,
+        unshift(
+            @$rsyncArgs,
+            '--bpc-top-dir',    $conf->{TopDir},                             # perltidy protect
+            '--bpc-host-name',  $t->{client},
+            '--bpc-share-name', $t->{shareName},
+            '--bpc-bkup-num',   $t->{backups}[$t->{newBkupIdx}]{num},
+            '--bpc-bkup-comp',  $t->{backups}[$t->{newBkupIdx}]{compress},
+            '--bpc-bkup-prevnum',  defined($t->{lastBkupIdx}) ? $t->{backups}[$t->{lastBkupIdx}]{num} : -1,
+            '--bpc-bkup-prevcomp', defined($t->{lastBkupIdx}) ? $t->{backups}[$t->{lastBkupIdx}]{compress} : -1,
+            '--bpc-bkup-inode0',   $inode0,
+            '--bpc-log-level',     $conf->{XferLogLevel},
             '--bpc-attrib-new',
-            '--bpc-log-level',      $conf->{XferLogLevel},
         );
     }
     $logMsg .= " (client path $shareNamePath)" if ( $t->{shareName} ne $shareNamePath );
@@ -434,7 +444,8 @@ sub start
     #from_to($args->{shareName}, "utf8", $conf->{ClientCharset})
     #                        if ( $conf->{ClientCharset} ne "" );
     if ( $conf->{RsyncBackupPCPath} eq "" || !-x $conf->{RsyncBackupPCPath} ) {
-        $t->{_errStr} = "\$Conf{RsyncBackupPCPath} is set to $conf->{RsyncBackupPCPath}, which isn't a valid executable";
+        $t->{_errStr} =
+          "\$Conf{RsyncBackupPCPath} is set to $conf->{RsyncBackupPCPath}, which isn't a valid executable";
         return;
     }
     $rsyncCmd = [$conf->{RsyncBackupPCPath}, @$rsyncArgs];
@@ -450,20 +461,22 @@ sub start
         # This is the rsync child.  We capture both stdout
         # and stderr to put into the XferLOG file.
         #
-        setpgrp 0,0;
+        setpgrp 0, 0;
         close(STDERR);
         open(STDERR, ">&STDOUT");
         #
         # Run the $conf->{RsyncBackupPCPath} command
         #
         print("This is the rsync child about to exec $conf->{RsyncBackupPCPath}\n");
-	$bpc->cmdExecOrEval($rsyncCmd);
+        $bpc->cmdExecOrEval($rsyncCmd);
         print("cmdExecOrEval failed $?\n");
+
         # should not be reached, but just in case...
         $t->{_errStr} = "Can't exec @$rsyncCmd)";
         return;
     }
     my $str = $bpc->execCmd2ShellCmd(@$rsyncCmd);
+
     #from_to($str, $conf->{ClientCharset}, "utf8")
     #                        if ( $conf->{ClientCharset} ne "" );
     $t->{XferLOG}->write(\"Running: $str\n");
@@ -473,7 +486,7 @@ sub start
 
 sub run
 {
-    my($t) = @_;
+    my($t)   = @_;
     my $conf = $t->{conf};
     my $bpc  = $t->{bpc};
 
@@ -491,6 +504,15 @@ sub run
                 my $exitCode = $? >> 8;
                 if ( $exitCode == 23 || $exitCode == 24 || $exitCode == 25 ) {
                     $t->{rsyncOut} .= "rsync_bpc exited with benign status $exitCode ($?)\n";
+                    $t->{rsyncOut} .=
+                      "That means the client rsync had errors on some files.  Please check the XferLOG.\n";
+                    $t->{rsyncOut} .=
+                      "It likely means that rsync's delete cleanup (which deletes files on the backup\n";
+                    $t->{rsyncOut} .=
+                      "server that are no longer on the client) was skipped.  You should fix the error(s)\n";
+                    $t->{rsyncOut} .= "that rsync can run cleanly.  You can also specify the --ignore-errors option\n";
+                    $t->{rsyncOut} .=
+                      "which will still do the delete even if there are rsync errors, but do that with caution.\n";
                     $t->{xferOK} = 1;
                     $t->{stats}{xferErrs}++;
                 } else {
@@ -498,8 +520,8 @@ sub run
                     $t->{xferOK} = 0;
                     $t->{stats}{xferErrs}++;
                 }
-	    } else {
-		$t->{xferOK} = 1;
+            } else {
+                $t->{xferOK} = 1;
             }
             $done = 1;
         } else {
@@ -525,12 +547,14 @@ sub run
                     push(@{$t->{logInfo}{$fileName}{status}}, "del");
                 }
                 s/^log: //;
-                push(@{$t->{logSave}},
-                        {
-                            mesg     => $_,
-                            type     => $type,
-                            fileName => $fileName,
-                        });
+                push(
+                    @{$t->{logSave}},
+                    {
+                        mesg     => $_,
+                        type     => $type,
+                        fileName => $fileName,
+                    }
+                );
                 $t->logSaveFlush();
                 next;
             }
@@ -544,7 +568,7 @@ sub run
                 next;
             }
             if ( /^__bpc_progress_fileCnt__ \d+/ ) {
-                print("$_\n") if ( !$t->{noProgressPrint} );
+                print("$_\n")                 if ( !$t->{noProgressPrint} );
                 $t->{XferLOG}->write(\"$_\n") if ( $conf->{XferLogLevel} >= 6 );
                 next;
             }
@@ -555,6 +579,9 @@ sub run
                 $t->{stats}{xferErrs}++;
             }
             if ( /^rsync error: / || /^rsync warning: / ) {
+                $t->{stats}{xferErrs}++;
+            }
+            if ( /^IO error encountered -- skipping file deletion/ ) {
                 $t->{stats}{xferErrs}++;
             }
             if ( /^rsync: send_files failed to open / || /^file has vanished: / ) {
@@ -577,7 +604,9 @@ sub run
                     $t->{XferLOG}->write(\"$_\n") if ( $conf->{XferLogLevel} >= 4 );
                 }
             }
-            if ( /^Done(Gen)?: (\d+) errors, (\d+) filesExist, (\d+) sizeExist, (\d+) sizeExistComp, (\d+) filesTotal, (\d+) sizeTotal, (\d+) filesNew, (\d+) sizeNew, (\d+) sizeNewComp, (\d+) inode/ ) {
+            if (
+                /^Done(Gen)?: (\d+) errors, (\d+) filesExist, (\d+) sizeExist, (\d+) sizeExistComp, (\d+) filesTotal, (\d+) sizeTotal, (\d+) filesNew, (\d+) sizeNew, (\d+) sizeNewComp, (\d+) inode/
+            ) {
                 $t->{stats}{xferErrs}      += $2;
                 $t->{stats}{nFilesExist}   += $3;
                 $t->{stats}{sizeExist}     += $4;
@@ -587,24 +616,24 @@ sub run
                 $t->{stats}{nFilesNew}     += $8;
                 $t->{stats}{sizeNew}       += $9;
                 $t->{stats}{sizeNewComp}   += $10;
-                $t->{stats}{inode}          = $11 if ( $t->{stats}{inode} < $11 );
+                $t->{stats}{inode} = $11 if ( $t->{stats}{inode} < $11 );
                 $t->{XferLOG}->write(\"$_\n");
                 $t->{XferLOG}->write(\"Parsing done: nFilesTotal = $t->{stats}{nFilesTotal}\n")
-                                        if ( $conf->{XferLogLevel} >= 3 );
+                  if ( $conf->{XferLogLevel} >= 3 );
                 $t->{fileCnt} = $t->{stats}{nFilesTotal};
                 $t->{byteCnt} = $t->{stats}{sizeTotal};
                 next;
             }
 
-#           if ( /: \.\/(.*): Read error at byte / ) {
-#                my $badFile = $1;
-#                push(@{$t->{badFiles}}, {
-#                        share => $t->{shareName},
-#                        file  => $badFile
-#                    });
-#           }
-#            from_to($_, $conf->{ClientCharset}, "utf8")
-#                                if ( $conf->{ClientCharset} ne "" );
+            #           if ( /: \.\/(.*): Read error at byte / ) {
+            #                my $badFile = $1;
+            #                push(@{$t->{badFiles}}, {
+            #                        share => $t->{shareName},
+            #                        file  => $badFile
+            #                    });
+            #           }
+            #            from_to($_, $conf->{ClientCharset}, "utf8")
+            #                                if ( $conf->{ClientCharset} ne "" );
             $t->{lastOutputLine} = $_ if ( !/^\s+$/ && length($_) );
             $t->{lastErrorLine}  = $_ if ( /^rsync_bpc: / || /^rsync error: / );
             $t->{XferLOG}->write(\"$_\n");
@@ -619,51 +648,37 @@ sub run
     #
     # Remove any rsyncTmp files in the backup directory
     #
-    my $bkupDir = $t->{type} eq "restore" ? "$conf->{TopDir}/pc/$t->{bkupSrcHost}/$t->{bkupSrcNum}"
-					  : "$conf->{TopDir}/pc/$t->{client}/$t->{backups}[$t->{newBkupIdx}]{num}";
+    my $bkupDir =
+      $t->{type} eq "restore"
+      ? "$conf->{TopDir}/pc/$t->{bkupSrcHost}/$t->{bkupSrcNum}"
+      : "$conf->{TopDir}/pc/$t->{client}/$t->{backups}[$t->{newBkupIdx}]{num}";
     my $bkupDirEntries = BackupPC::DirOps::dirRead($bpc, $bkupDir);
-    my $pidRunning = {};
+    my $pidRunning     = {};
     if ( ref($bkupDirEntries) eq 'ARRAY' ) {
         foreach my $e ( @$bkupDirEntries ) {
             next if ( $e->{name} !~ /^rsyncTmp\.(\d+)\.\d+\.\d+$/ );
             my $pid = $1;
-            $pidRunning->{$pid} = kill(0, $pid) ? 1 : 0 if ( !defined($pidRunning->{$pid} ) );
+            $pidRunning->{$pid} = kill(0, $pid) ? 1 : 0 if ( !defined($pidRunning->{$pid}) );
             next if ( $pidRunning->{$pid} );
-	    $t->{XferLOG}->write(\"Removing rsync temporary file $bkupDir/$e->{name}\n");
-	    unlink("$bkupDir/$e->{name}");
+            $t->{XferLOG}->write(\"Removing rsync temporary file $bkupDir/$e->{name}\n");
+            unlink("$bkupDir/$e->{name}");
         }
     }
 
     if ( $t->{type} eq "restore" ) {
         if ( $t->{xferOK} ) {
-            return (
-                $t->{fileCnt},
-                $t->{byteCnt},
-                0,
-                undef,
-            );
+            return ($t->{fileCnt}, $t->{byteCnt}, 0, undef,);
         } else {
-            return (
-                $t->{fileCnt},
-                $t->{byteCnt},
-                $t->{stats}{xferErrs},
-                $t->{lastOutputLine},
-            );
+            return ($t->{fileCnt}, $t->{byteCnt}, $t->{stats}{xferErrs}, $t->{lastOutputLine},);
         }
     } else {
         $t->{xferErrCnt} = $t->{stats}{xferErrs};
-	return (
-            $t->{stats}{xferErrs},
-            $t->{stats}{nFilesExist},
-            $t->{stats}{sizeExist},
-            $t->{stats}{sizeExistComp},
-            $t->{stats}{nFilesTotal},
-            $t->{stats}{sizeTotal},
-            $t->{stats}{nFilesNew},
-            $t->{stats}{sizeNew},
-            $t->{stats}{sizeNewComp},
+        return (
+            $t->{stats}{xferErrs},      $t->{stats}{nFilesExist}, $t->{stats}{sizeExist},
+            $t->{stats}{sizeExistComp}, $t->{stats}{nFilesTotal}, $t->{stats}{sizeTotal},
+            $t->{stats}{nFilesNew},     $t->{stats}{sizeNew},     $t->{stats}{sizeNewComp},
             $t->{stats}{inode},
-	);
+        );
     }
 }
 
@@ -704,7 +719,7 @@ sub logSaveFlush
 {
     my($t, $all) = @_;
     my $change = 1;
-    my $conf = $t->{conf};
+    my $conf   = $t->{conf};
 
     $all = 1 if ( $t->{type} eq "restore" );
 
@@ -712,11 +727,10 @@ sub logSaveFlush
         $change = 0;
         my $fileName = $t->{logSave}[0]{fileName};
         if ( defined($t->{logInfo}{$fileName}) || $all || @{$t->{logSave}} > 200 ) {
-            my $mesg = sprintf("    %-6s %s",
-                                shift(@{$t->{logInfo}{$fileName}{status}}),
-                                $t->{logSave}[0]{mesg});
+            my $mesg = sprintf("    %-6s %s", shift(@{$t->{logInfo}{$fileName}{status}}), $t->{logSave}[0]{mesg});
             delete($t->{logInfo}{$fileName}) if ( !@{$t->{logInfo}{$fileName}{status}} );
             shift(@{$t->{logSave}});
+
             #from_to($mesg, $conf->{ClientCharset}, "utf8")
             #                    if ( $conf->{ClientCharset} ne "" );
             $t->{lastOutputLine} = $mesg if ( !/^\s+$/ && length($mesg) );
@@ -729,7 +743,7 @@ sub logSaveFlush
         # prune the fileName logInfo array if it gets too big
         #
         my @info = sort { $t->{logInfo}{$a}{seqNum} <=> $t->{logInfo}{$b}{seqNum} }
-                        keys(%{$t->{logInfo}});
+          keys(%{$t->{logInfo}});
         while ( @info > 500 ) {
             my $fileName = shift(@info);
             delete($t->{logInfo}{$fileName});

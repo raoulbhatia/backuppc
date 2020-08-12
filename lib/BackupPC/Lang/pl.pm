@@ -18,21 +18,22 @@ use utf8;
 
 # --------------------------------
 
-$Lang{Start_Archive} = "Zacznij Archiwizację";
+$Lang{Start_Archive}        = "Zacznij Archiwizację";
 $Lang{Stop_Dequeue_Archive} = "Zatrzymaj/Odkolejkuj Archiwizację";
-$Lang{Start_Full_Backup} = "Zacznij Pełną Kopię Bezpieczeństwa";
-$Lang{Start_Incr_Backup} = "Zacznij Inkrementacyjną Kopię Bezpieczeństwa";
-$Lang{Stop_Dequeue_Backup} = "Zatrzymaj/Odkolejkuj Kopię Bezpieczeństwa";
-$Lang{Restore} = "Przywróć";
+$Lang{Start_Full_Backup}    = "Zacznij Pełną Kopię Bezpieczeństwa";
+$Lang{Start_Incr_Backup}    = "Zacznij Inkrementacyjną Kopię Bezpieczeństwa";
+$Lang{Stop_Dequeue_Backup}  = "Zatrzymaj/Odkolejkuj Kopię Bezpieczeństwa";
+$Lang{Restore}              = "Przywróć";
 
 $Lang{Type_full} = "pełny";
 $Lang{Type_incr} = "inkrementacyjny";
 
 # -----
 
-$Lang{Only_privileged_users_can_view_admin_options} = "Tylko uprzywilejowani użytkownicy mogą oglądać opcje administracyjne";
-$Lang{H_Admin_Options} = "Serwer BackupPC: Opcje Administracyjne";
-$Lang{Admin_Options} = "Opcje Administracyjne";
+$Lang{Only_privileged_users_can_view_admin_options} =
+  "Tylko uprzywilejowani użytkownicy mogą oglądać opcje administracyjne";
+$Lang{H_Admin_Options}    = "Serwer BackupPC: Opcje Administracyjne";
+$Lang{Admin_Options}      = "Opcje Administracyjne";
 $Lang{Admin_Options_Page} = <<EOF;
 \${h1(qq{$Lang{Admin_Options}})}
 <br>
@@ -54,7 +55,7 @@ $Lang{Admin_Options_Page} = <<EOF;
 -->
 EOF
 
-$Lang{Unable_to_connect_to_BackupPC_server} = "Nie można połączyć się z serwerem BackupPC";
+$Lang{Unable_to_connect_to_BackupPC_server}               = "Nie można połączyć się z serwerem BackupPC";
 $Lang{Unable_to_connect_to_BackupPC_server_error_message} = <<EOF;
 Ten skrypt CGI (\$MyURL) nie może połączyć się z BackupPC
 serwer na \$Conf{ServerHost} porcie \$Conf{ServerPort}.<br>
@@ -78,7 +79,7 @@ EOF
 
 $Lang{H_BackupPC_Server_Status} = "Status Serwera BackupPC";
 
-$Lang{BackupPC_Server_Status_General_Info}= <<EOF;
+$Lang{BackupPC_Server_Status_General_Info} = <<EOF;
 \${h2(\"Informacje Ogólne Serwera\")}
 
 <ul>
@@ -142,8 +143,8 @@ EOF
 
 # --------------------------------
 $Lang{BackupPC__Server_Summary} = "BackupPC: Wyciąg Hostow";
-$Lang{BackupPC__Archive} = "BackupPC: Archiwum";
-$Lang{BackupPC_Summary} = <<EOF;
+$Lang{BackupPC__Archive}        = "BackupPC: Archiwum";
+$Lang{BackupPC_Summary}         = <<EOF;
 
 \${h1(qq{$Lang{BackupPC__Server_Summary}})}
 <p>
@@ -256,7 +257,7 @@ EOF
 
 $Lang{BackupPC_Archive2} = <<EOF;
 \${h1(qq{$Lang{BackupPC__Archive}})}
-Przystępuje do archiwizacji następujących hostów 
+Przystępuje do archiwizacji następujących hostów
 <ul>
 \$HostListStr
 </ul>
@@ -318,8 +319,9 @@ $Lang{Pool_Stat} = <<EOF;
 EOF
 
 # --------------------------------
-$Lang{BackupPC__Backup_Requested_on__host} = "BackupPC: Kopia rządana na \$host";
+$Lang{BackupPC__Backup_Requested_on__host}              = "BackupPC: Kopia rządana na \$host";
 $Lang{BackupPC__Delete_Requested_for_a_backup_of__host} = "BackupPC: Delete Requested for a backup of \$host";
+
 # --------------------------------
 $Lang{REPLY_FROM_SERVER} = <<EOF;
 \${h1(\$str)}
@@ -328,8 +330,10 @@ Odpowiedź serwera to : \$reply
 <p>
 Wróć do <a href="\$MyURL?host=\$host">strony domowej \$host</a>.
 EOF
+
 # --------------------------------
 $Lang{BackupPC__Start_Backup_Confirm_on__host} = "BackupPC: Potwierdzony start kopii na \$host";
+
 # --------------------------------
 $Lang{Are_you_sure_start} = <<EOF;
 \${h1("Are you sure?")}
@@ -348,8 +352,10 @@ Czy napewno chcesz tego ?
 <input type="submit" value="No" name="ignore">
 </form>
 EOF
+
 # --------------------------------
 $Lang{BackupPC__Stop_Backup_Confirm_on__host} = "BackupPC: Zatrzymaj potwierdzoną kopie na \$host";
+
 # --------------------------------
 $Lang{Are_you_sure_stop} = <<EOF;
 
@@ -373,12 +379,16 @@ Czy naprawdę tego chcesz ?
 </form>
 
 EOF
+
 # --------------------------------
 $Lang{Only_privileged_users_can_view_queues_} = "Tylko uprzywilejowani użytwkonicy mogą przeglądać kolejki";
+
 # --------------------------------
 $Lang{Only_privileged_users_can_archive} = "ylko uprzywilejowani użytwkonicy mogą archiwizować.";
+
 # --------------------------------
 $Lang{BackupPC__Queue_Summary} = "BackupPC: Podsumowanie kolejki";
+
 # --------------------------------
 $Lang{Backup_Queue_Summary} = <<EOF;
 \${h1("Podsumowanie kolejki kopii bezpieczeństwa")}
@@ -421,10 +431,11 @@ EOF
 
 # --------------------------------
 $Lang{Backup_PC__Log_File__file} = "BackupPC: Plik \$file";
-$Lang{Log_File__file__comment} = <<EOF;
+$Lang{Log_File__file__comment}   = <<EOF;
 \${h1("Plik \$file \$comment")}
 <p>
 EOF
+
 # --------------------------------
 $Lang{Contents_of_log_file} = <<EOF;
 Komentarze do pliku <tt>\$file</tt>, zmodyfikowne \$mtimeStr \$comment
@@ -432,12 +443,13 @@ EOF
 
 # --------------------------------
 $Lang{skipped__skipped_lines} = "[ pominięto \$skipped linii ]\n";
+
 # --------------------------------
 $Lang{_pre___Can_t_open_log_file__file} = "<pre>\nNie można otworzyc dziennika \$file\n";
 
 # --------------------------------
 $Lang{BackupPC__Log_File_History} = "BackupPC: Historia Dziennika";
-$Lang{Log_File_History__hdr} = <<EOF;
+$Lang{Log_File_History__hdr}      = <<EOF;
 \${h1("Histria Dziennika \$hdr")}
 <p>
 <table class="tableStnd sortable" border cellspacing="1" cellpadding="3" width="80%">
@@ -460,13 +472,12 @@ $Lang{Recent_Email_Summary} = <<EOF;
 \$str
 </table>
 EOF
- 
 
 # ------------------------------
 $Lang{Browse_backup__num_for__host} = "BackupPC: Przeglądaj \$num dla \$host";
 
 # ------------------------------
-$Lang{Restore_Options_for__host} = "BackupPC: Przywróć opcje dla \$host";
+$Lang{Restore_Options_for__host}  = "BackupPC: Przywróć opcje dla \$host";
 $Lang{Restore_Options_for__host2} = <<EOF;
 \${h1("Przywróć opcje dla \$host")}
 <p>
@@ -484,7 +495,7 @@ Proszę wybrać jedna z nich.
 EOF
 
 $Lang{Restore_Options_for__host_Option1} = <<EOF;
-Możesz zacząć przywracanie bezpośrednio na 
+Możesz zacząć przywracanie bezpośrednio na
 <b>\$directHost</b>.
 </p><p>
 <b>Uwaga:</b> jakikolwiek plik pasujący do tych ktore masz
@@ -579,7 +590,6 @@ Proszę poprosić swojego Administratora aby zainstalował Archive::Zip z
 </p>
 EOF
 
-
 # ------------------------------
 $Lang{Option_3__Download_Zip_archive} = <<EOF;
 \${h2("Opcja trzecia : Ściągnij archiwum Tar")}
@@ -606,7 +616,6 @@ z\${EscHTML(\$pathHdr eq "" ? "/" : \$pathHdr)}
 <input type="submit" value="Sciągnij plik Tar" name="ignore">
 </form>
 EOF
-
 
 # ------------------------------
 $Lang{Restore_Confirm_on__host} = "BackupPC: Potwiedź przywrócenie na \$host";
@@ -640,10 +649,9 @@ Czy napewno chcesz tego ?
 </form>
 EOF
 
-
 # --------------------------
 $Lang{Restore_Requested_on__hostDest} = "BackupPC: Rządanie przywrócenie na \$hostDest";
-$Lang{Reply_from_server_was___reply} = <<EOF;
+$Lang{Reply_from_server_was___reply}  = <<EOF;
 \${h1(\$str)}
 <p>
 Odpowiedź serwera : \$reply
@@ -657,12 +665,12 @@ $Lang{BackupPC_Archive_Reply_from_server} = <<EOF;
 Odpowiedź serwera : \$reply
 EOF
 
-
 # --------------------------------
 $Lang{BackupPC__Delete_Backup_Confirm__num_of__host} = "BackupPC: Delete Backup Confirm #\$num of \$host";
+
 # --------------------------------
-$Lang{A_filled} = "a filled";
-$Lang{An_unfilled} = "an unfilled";
+$Lang{A_filled}            = "a filled";
+$Lang{An_unfilled}         = "an unfilled";
 $Lang{Are_you_sure_delete} = <<EOF;
 \${h1("Are you sure?")}
 <p>
@@ -723,8 +731,9 @@ Kliknij na numer kopii aby przeglądać i przywracać wybrane pliki/katalogi.
     <td align="center"> Początek </td>
     <td align="center"> Czas trwania w min. </td>
     <td align="center"> Wiek/dni </td>
+    <td align="center"> Trzymać </td>
     \$deleteHdrStr
-    <td align="center"> Ścieżka serwera kopii </td>
+    <td align="center"> Komentarz </td>
 </tr>
 \$str
 </table>
@@ -794,7 +803,7 @@ Wydajność kompresji dla plików będących w puli oraz tych świeżo skompreso
 </table>
 EOF
 
-$Lang{Host__host_Archive_Summary} = "BackupPC: Podsumowanie Archiwizacji hosta \$host";
+$Lang{Host__host_Archive_Summary}  = "BackupPC: Podsumowanie Archiwizacji hosta \$host";
 $Lang{Host__host_Archive_Summary2} = <<EOF;
 \${h1("Podsumowanie Archiwizacji hosta \$host")}
 <p>
@@ -822,7 +831,7 @@ $Lang{Host__host_Archive_Summary2} = <<EOF;
 EOF
 
 # -------------------------
-$Lang{Error} = "BackupPC: Błąd";
+$Lang{Error}         = "BackupPC: Błąd";
 $Lang{Error____head} = <<EOF;
 \${h1("Błąd: \$head")}
 <p>\$mesg</p>
@@ -852,29 +861,42 @@ $Lang{Backup_browse_for__host} = <<EOF;
         }
       }
     }
-    
+
     function toggleThis(checkbox)
     {
        var cb = eval("document.form1."+checkbox);
-       cb.checked = !cb.checked;	
+       cb.checked = !cb.checked;
     }
 
 //-->
 </script>
 
-<form name="form0" method="post" action="\$MyURL">
-<input type="hidden" name="num" value="\$num">
-<input type="hidden" name="host" value="\$host">
-<input type="hidden" name="share" value="\${EscHTML(\$share)}">
-<input type="hidden" name="action" value="browse">
 <ul>
 <li> Przegladasz kopie nr #\$num, która zaczeła się około \$backupTime
         (\$backupAge dni temu),
 \$filledBackup
-<li> Wpisz adres: <input type="text" name="dir" size="50" maxlength="4096" value="\${EscHTML(\$dir)}"> <input type="submit" value="\$Lang->{Go}" name="Submit">
+<li>
+<form name="formDir" method="post" action="\$MyURL">
+<input type="hidden" name="num" value="\$num">
+<input type="hidden" name="host" value="\$host">
+<input type="hidden" name="share" value="\${EscHTML(\$share)}">
+<input type="hidden" name="action" value="browse">
+Wpisz adres: <input type="text" name="dir" size="60" maxlength="4096" value="\${EscHTML(\$dir)}">
+    <input type="submit" value="\$Lang->{Go}" name="Submit">
+</form>
+<li>
+<form name="formComment" method="post" action="\$MyURL">
+<input type="hidden" name="num" value="\$num">
+<input type="hidden" name="host" value="\$host">
+<input type="hidden" name="share" value="\${EscHTML(\$share)}">
+<input type="hidden" name="action" value="browse">
+Komentarz: <input type="text" name="comment" class="inputCompact" size="60" maxlength="4096" value="\${EscHTML(\$comment)}">
+    <input type="submit" value="\$Lang->{CfgEdit_Button_Save}" name="SetComment">
+</form>
 <li> Wpisz adres aby przejść do niego,
 <li> Kliknij plik aby go przywrócić,
 <li> Możesz zobaczyć kopie <a href="\$MyURL?action=dirHistory&host=\${EscURI(\$host)}&share=\$shareURI&dir=\$pathURI">history</a> obecnego adresu.
+\$share2pathStr
 </ul>
 </form>
 
@@ -907,6 +929,13 @@ This is now in the checkAll row
 <input type="submit" name="Submit" value="Restore selected files">
 -->
 </form>
+EOF
+
+$Lang{Browse_ClientShareName2Path} = <<EOF;
+<li> Mapowanie nazwy udziału na ścieżkę rzeczywistego klienta (ClientShareName2Path):
+    <ul>
+\$share2pathStr
+    </ul>
 EOF
 
 # ------------------------------
@@ -987,7 +1016,7 @@ EOF
 # ------------------------------
 $Lang{Archive___num_details_for__host} = "BackupPC: Detale Archiwum nr #\$num dla \$host";
 
-$Lang{Archive___num_details_for__host2 } = <<EOF;
+$Lang{Archive___num_details_for__host2} = <<EOF;
 \${h1("Detale Archiwum nr #\$num dla \$host")}
 <p>
 <table class="tableStnd" border cellspacing="1" cellpadding="3" width="80%">
@@ -1019,59 +1048,57 @@ $Lang{Email_Summary} = "BackupPC: Podsumowanie emailów";
 #  !! ERROR messages !!
 # -----------------------------------
 $Lang{BackupPC__Lib__new_failed__check_apache_error_log} = "BackupPC::Lib->new failed: sprawdź apache error_log\n";
-$Lang{Wrong_user__my_userid_is___} =  
-              "Zly użytkownik: mój userid to \$>, a nie \$uid"
-            . "(\$Conf{BackupPCUser})\n";
+$Lang{Wrong_user__my_userid_is___} = "Zly użytkownik: mój userid to \$>, a nie \$uid(\$Conf{BackupPCUser})\n";
+
 # $Lang{Only_privileged_users_can_view_PC_summaries} = "Tylko uprzywilejowani użytkownicy mogą przegladać podsumowania.";
-$Lang{Only_privileged_users_can_stop_or_start_backups} = 
-                  "Tylko uprzywilejowani użytkownicy mogą dokonywać kopii na"
-		. " \${EscHTML(\$host)}.";
-$Lang{Invalid_number__num} = "Zły numer \${EscHTML(\$In{num})}";
+$Lang{Only_privileged_users_can_stop_or_start_backups} =
+  "Tylko uprzywilejowani użytkownicy mogą dokonywać kopii na \${EscHTML(\$host)}.";
+$Lang{Invalid_number__num}                         = "Zły numer \${EscHTML(\$In{num})}";
 $Lang{Unable_to_open__file__configuration_problem} = "Niemozna otworzyć \$file: problem z konfiguracja ?";
-$Lang{Only_privileged_users_can_view_log_or_config_files} = "Tylko uprzywilejowani użytkownicy mogą przeglądac logi/pliki konf.";
+$Lang{Only_privileged_users_can_view_log_or_config_files} =
+  "Tylko uprzywilejowani użytkownicy mogą przeglądac logi/pliki konf.";
 $Lang{Only_privileged_users_can_view_log_files} = "Tylko uprzywilejowani użytkownicy mogą przeglądać logi.";
-$Lang{Only_privileged_users_can_view_email_summaries} = "Tylko uprzywilejowani użytkownicy mogą przeglądać podsumowania emaili.";
-$Lang{Only_privileged_users_can_browse_backup_files} = "Tylko uprzywilejowani użytkownicy mogą przeglądać pliki kopii"
-                . " for host \${EscHTML(\$In{host})}.";
-$Lang{Only_privileged_users_can_delete_backups} = "Only privileged users can delete backups"
-                . " of host \${EscHTML(\$host)}.";
-$Lang{Empty_host_name} = "Pusta nazwa hosta.";
-$Lang{Directory___EscHTML} = "Adres \${EscHTML(\"\$TopDir/pc/\$host/\$num\")}"
-		    . " jest pusty";
-$Lang{Can_t_browse_bad_directory_name2} = "Nie można przeglądać - zła nazwa"
-	            . " \${EscHTML(\$relDir)}";
-$Lang{Only_privileged_users_can_restore_backup_files} = "Tylko uprzywilejowani użytkownicy mogą przywracać pliki kopii"
-                . " dla hosta \${EscHTML(\$In{host})}.";
+$Lang{Only_privileged_users_can_view_email_summaries} =
+  "Tylko uprzywilejowani użytkownicy mogą przeglądać podsumowania emaili.";
+$Lang{Only_privileged_users_can_browse_backup_files} =
+  "Tylko uprzywilejowani użytkownicy mogą przeglądać pliki kopii for host \${EscHTML(\$In{host})}.";
+$Lang{Only_privileged_users_can_delete_backups} =
+  "Only privileged users can delete backups of host \${EscHTML(\$host)}.";
+$Lang{Empty_host_name}                  = "Pusta nazwa hosta.";
+$Lang{Directory___EscHTML}              = "Adres \${EscHTML(\"\$TopDir/pc/\$host/\$num\")} jest pusty";
+$Lang{Can_t_browse_bad_directory_name2} = "Nie można przeglądać - zła nazwa \${EscHTML(\$relDir)}";
+$Lang{Only_privileged_users_can_restore_backup_files} =
+  "Tylko uprzywilejowani użytkownicy mogą przywracać pliki kopii dla hosta \${EscHTML(\$In{host})}.";
 $Lang{Bad_host_name} = "Zła nazwa hosta \${EscHTML(\$host)}";
-$Lang{You_haven_t_selected_any_files__please_go_Back_to} = "Nie zaznaczyłeś zadnych plików; proszę cofnąć sie do"
-                . " zaznaczanych plików.";
-$Lang{You_haven_t_selected_any_hosts} = "Nie zaznaczyłeś zadnego hosta; proszę cofnij sie"
-                . " i zaznacz odpowiednie hosty.";
-$Lang{Nice_try__but_you_can_t_put} = "Nieźle , ale nie możesz umieścic \'..\' w nazwie pliku";
-$Lang{Host__doesn_t_exist} = "Host \${EscHTML(\$In{hostDest})} nie istnieje";
-$Lang{You_don_t_have_permission_to_restore_onto_host} = "Nie masz uprawnień do  przywracania danych na host"
-		    . " \${EscHTML(\$In{hostDest})}";
-$Lang{Can_t_open_create__openPath} = "Nie można otworzyć/stworzyć"
-		. "\${EscHTML(\"\$openPath\")}";
-$Lang{Only_privileged_users_can_restore_backup_files2} = "Tylko uprzywilejowani użytkownicy mogą przywracać pliki kopii"
-                . " dla hosta \${EscHTML(\$host)}.";
-$Lang{Empty_host_name} = "Pusta nazwa hosta";
+$Lang{You_haven_t_selected_any_files__please_go_Back_to} =
+  "Nie zaznaczyłeś zadnych plików; proszę cofnąć sie do zaznaczanych plików.";
+$Lang{You_haven_t_selected_any_hosts} = "Nie zaznaczyłeś zadnego hosta; proszę cofnij sie i zaznacz odpowiednie hosty.";
+$Lang{Nice_try__but_you_can_t_put}    = "Nieźle , ale nie możesz umieścic \'..\' w nazwie pliku";
+$Lang{Host__doesn_t_exist}            = "Host \${EscHTML(\$In{hostDest})} nie istnieje";
+$Lang{You_don_t_have_permission_to_restore_onto_host} =
+  "Nie masz uprawnień do  przywracania danych na host \${EscHTML(\$In{hostDest})}";
+$Lang{Can_t_open_create__openPath} = "Nie można otworzyć/stworzyć\${EscHTML(\"\$openPath\")}";
+$Lang{Only_privileged_users_can_restore_backup_files2} =
+  "Tylko uprzywilejowani użytkownicy mogą przywracać pliki kopii dla hosta \${EscHTML(\$host)}.";
+$Lang{Empty_host_name}      = "Pusta nazwa hosta";
 $Lang{Unknown_host_or_user} = "Nieznany host albo uzytwkonik \${EscHTML(\$host)}";
-$Lang{Only_privileged_users_can_view_information_about} = "Tylko uprzywilejowani użytkownicy mogą przeglądać informacje o"
-                . " host \${EscHTML(\$host)}." ;
-$Lang{Only_privileged_users_can_view_archive_information} = "Tylko uprzywilejowani użytkownicy mogą przeglądać informacje o archiwum.";
-$Lang{Only_privileged_users_can_view_restore_information} = "Tylko uprzywilejowani użytkownicy mogą przeglądać przywracać informacje.";
-$Lang{Restore_number__num_for_host__does_not_exist} = "Punkt przywracania nr \$num dla hosta \${EscHTML(\$host)} nie"
-	        . " istnieje.";
-$Lang{Archive_number__num_for_host__does_not_exist} = "Archiwum numer \$num dla hosta \${EscHTML(\$host)} nie"
-                . " istnieje.";
+$Lang{Only_privileged_users_can_view_information_about} =
+  "Tylko uprzywilejowani użytkownicy mogą przeglądać informacje o host \${EscHTML(\$host)}.";
+$Lang{Only_privileged_users_can_view_archive_information} =
+  "Tylko uprzywilejowani użytkownicy mogą przeglądać informacje o archiwum.";
+$Lang{Only_privileged_users_can_view_restore_information} =
+  "Tylko uprzywilejowani użytkownicy mogą przeglądać przywracać informacje.";
+$Lang{Restore_number__num_for_host__does_not_exist} =
+  "Punkt przywracania nr \$num dla hosta \${EscHTML(\$host)} nie istnieje.";
+$Lang{Archive_number__num_for_host__does_not_exist} =
+  "Archiwum numer \$num dla hosta \${EscHTML(\$host)} nie istnieje.";
 $Lang{Can_t_find_IP_address_for} = "Nie moge znaleść adresu IP dla \${EscHTML(\$host)}";
-$Lang{host_is_a_DHCP_host} = <<EOF;
+$Lang{host_is_a_DHCP_host}       = <<EOF;
 \$host jest hostem DHCP, i dlatego nie znam jego IP.  Sprawdziłem
-nazwe netbios \$ENV{REMOTE_ADDR}\$tryIP, i znalazlem ze ta maszyna 
+nazwe netbios \$ENV{REMOTE_ADDR}\$tryIP, i znalazlem ze ta maszyna
 to nie \$host.
 <p>
-Dopuki  \$host jest adresem DHCP, możesz 
+Dopuki  \$host jest adresem DHCP, możesz
 rozpocząć to źądanie bezpośrednio z tejże maszyny.
 EOF
 
@@ -1079,48 +1106,50 @@ EOF
 # !! Server Mesg !!
 # ------------------------------------
 
-$Lang{Backup_requested_on_DHCP__host} = "Kopia zaźądana na hoscie DHCP \$host (\$In{hostIP}) przez"
-		                      . " \$User z \$ENV{REMOTE_ADDR}";
-$Lang{Backup_requested_on__host_by__User} = "Kopia zażądana na  \$host przez \$User";
+$Lang{Backup_requested_on_DHCP__host} =
+  "Kopia zaźądana na hoscie DHCP \$host (\$In{hostIP}) przez \$User z \$ENV{REMOTE_ADDR}";
+$Lang{Backup_requested_on__host_by__User}        = "Kopia zażądana na  \$host przez \$User";
 $Lang{Backup_stopped_dequeued_on__host_by__User} = "Kopia przerwana na \$host przez \$User";
-$Lang{Restore_requested_to_host__hostDest__backup___num} = "Przywrócenie na host \$hostDest, kopii nr #\$num,"
-	     . " przez \$User z \$ENV{REMOTE_ADDR}";
-$Lang{Delete_requested_for_backup_of__host_by__User} = "Delete requested for backup #\$num of \$host"
-             . " by \$User from \$ENV{REMOTE_ADDR}";
+$Lang{Restore_requested_to_host__hostDest__backup___num} =
+  "Przywrócenie na host \$hostDest, kopii nr #\$num, przez \$User z \$ENV{REMOTE_ADDR}";
+$Lang{Delete_requested_for_backup_of__host_by__User} =
+  "Delete requested for backup #\$num of \$host by \$User from \$ENV{REMOTE_ADDR}";
 $Lang{Archive_requested} = "Archiwum żądane przez \$User z \$ENV{REMOTE_ADDR}";
 
 # -------------------------------------------------
 # ------- Stuff that was forgotten ----------------
 # -------------------------------------------------
 
-$Lang{Status} = "Status";
-$Lang{PC_Summary} = "Podsumowanie hostów";
-$Lang{LOG_file} = "Plik Log";
-$Lang{LOG_files} = "Pliki Log";
-$Lang{Old_LOGs} = "Stare Logi";
+$Lang{Status}        = "Status";
+$Lang{PC_Summary}    = "Podsumowanie hostów";
+$Lang{LOG_file}      = "Plik Log";
+$Lang{LOG_files}     = "Pliki Log";
+$Lang{Old_LOGs}      = "Stare Logi";
 $Lang{Email_summary} = "Podsumowanie emaili";
-$Lang{Config_file} = "Plik Konfiguracyjny";
+$Lang{Config_file}   = "Plik Konfiguracyjny";
+
 # $Lang{Hosts_file} = "Plik Hostów";
 $Lang{Current_queues} = "Aktualne kolejki";
-$Lang{Documentation} = "Dokumentacja";
+$Lang{Documentation}  = "Dokumentacja";
 
 #$Lang{Host_or_User_name} = "<small>Host lub nazwa użytkownika:</small>";
-$Lang{Go} = "Idź";
-$Lang{Hosts} = "Hosty";
+$Lang{Go}            = "Idź";
+$Lang{Hosts}         = "Hosty";
 $Lang{Select_a_host} = "Wybierz host...";
 
-$Lang{There_have_been_no_archives} = "<h2> Nie było żadnej archiwizacji </h2>\n";
+$Lang{There_have_been_no_archives}      = "<h2> Nie było żadnej archiwizacji </h2>\n";
 $Lang{This_PC_has_never_been_backed_up} = "<h2> Ten PC nie byl nikty backupowany!! </h2>\n";
-$Lang{This_PC_is_used_by} = "<li>Ten PC jest używany przez \${UserLink(\$user)}";
+$Lang{This_PC_is_used_by}               = "<li>Ten PC jest używany przez \${UserLink(\$user)}";
 
 $Lang{Extracting_only_Errors} = "(Błędy wypakowywania)";
-$Lang{XferLOG} = "XferLOG";
-$Lang{Errors}  = "Błędy";
+$Lang{XferLOG}                = "XferLOG";
+$Lang{Errors}                 = "Błędy";
 
 # ------------
 $Lang{Last_email_sent_to__was_at___subject} = <<EOF;
 <li>Ostatni email wysłany do \${UserLink(\$user)} byl o \$mailTime, subject "\$subj".
 EOF
+
 # ------------
 $Lang{The_command_cmd_is_currently_running_for_started} = <<EOF;
 <li>Polecenie \$cmd jest aktualnie wykonywane dla \$host, rozpoczęte o \$startTime.
@@ -1207,9 +1236,9 @@ $Lang{fileHeader} = <<EOF;
     </tr>
 EOF
 
-$Lang{Home} = "Dom";
-$Lang{Browse} = "przeglądaj kopie";
-$Lang{Last_bad_XferLOG} = "Ostatni zły XferLOG";
+$Lang{Home}                         = "Dom";
+$Lang{Browse}                       = "przeglądaj kopie";
+$Lang{Last_bad_XferLOG}             = "Ostatni zły XferLOG";
 $Lang{Last_bad_XferLOG_errors_only} = "Ostatni zły XferLOG (tylko błedy)";
 
 $Lang{This_display_is_merged_with_backup} = <<EOF;
@@ -1256,7 +1285,7 @@ EOF
 
 $Lang{BackupPC__Documentation} = "BackupPC: Dokumentacja";
 
-$Lang{No} = "nie";
+$Lang{No}  = "nie";
 $Lang{Yes} = "tak";
 
 $Lang{The_directory_is_empty} = <<EOF;
@@ -1272,34 +1301,33 @@ $Lang{backupType_incr}    = "inkr";
 $Lang{backupType_active}  = "active";
 $Lang{backupType_partial} = "cząstwkowy";
 
-$Lang{failed} = "nieudany";
+$Lang{failed}  = "nieudany";
 $Lang{success} = "udany";
-$Lang{and} = "oraz";
+$Lang{and}     = "oraz";
 
 # ------
 # Hosts states and reasons
-$Lang{Status_idle} = "bezczynny";
-$Lang{Status_backup_starting} = "kopia w drodze";
-$Lang{Status_backup_in_progress} = "kopia w trakcie tworzenia";
-$Lang{Status_restore_starting} = "przywracanie w drodze";
+$Lang{Status_idle}                = "bezczynny";
+$Lang{Status_backup_starting}     = "kopia w drodze";
+$Lang{Status_backup_in_progress}  = "kopia w trakcie tworzenia";
+$Lang{Status_restore_starting}    = "przywracanie w drodze";
 $Lang{Status_restore_in_progress} = "przywracanie w trakcie tworzenia";
-$Lang{Status_admin_pending} = "link wtrakcie";
-$Lang{Status_admin_running} = "link działa";
+$Lang{Status_admin_pending}       = "link wtrakcie";
+$Lang{Status_admin_running}       = "link działa";
 
-$Lang{Reason_backup_done}    = "zrobione";
-$Lang{Reason_restore_done}   = "przywracanie zrobione";
-$Lang{Reason_archive_done}   = "archiwum zrobione";
-$Lang{Reason_nothing_to_do}  = "bezczynny";
-$Lang{Reason_backup_failed}  = "kopia nieudana";
-$Lang{Reason_restore_failed} = "przywracanie nieudane";
-$Lang{Reason_archive_failed} = "archiwizacja nieudana";
-$Lang{Reason_no_ping}        = "nie ma pingu";
+$Lang{Reason_backup_done}              = "zrobione";
+$Lang{Reason_restore_done}             = "przywracanie zrobione";
+$Lang{Reason_archive_done}             = "archiwum zrobione";
+$Lang{Reason_nothing_to_do}            = "bezczynny";
+$Lang{Reason_backup_failed}            = "kopia nieudana";
+$Lang{Reason_restore_failed}           = "przywracanie nieudane";
+$Lang{Reason_archive_failed}           = "archiwizacja nieudana";
+$Lang{Reason_no_ping}                  = "nie ma pingu";
 $Lang{Reason_backup_canceled_by_user}  = "kopia przerwana przez użytwkonika";
 $Lang{Reason_restore_canceled_by_user} = "przywracanie przerwane przez użytkownika";
 $Lang{Reason_archive_canceled_by_user} = "archiwum przerwane przez użytwkonika";
-$Lang{Disabled_OnlyManualBackups}  = "automat wyłączony";  
-$Lang{Disabled_AllBackupsDisabled} = "wyłączony";                  
-
+$Lang{Disabled_OnlyManualBackups}      = "automat wyłączony";
+$Lang{Disabled_AllBackupsDisabled}     = "wyłączony";
 
 # ---------
 # Email messages
@@ -1313,12 +1341,12 @@ Temat: $subj
 $headers
 Drogi $userName,
 
-Twoj PC ($host) nigdy nie został zabespieczony przez nasz program 
-tworzenia kopii bezpieczeństwa.  Backup powinien nastąpic automatycznie 
+Twoj PC ($host) nigdy nie został zabespieczony przez nasz program
+tworzenia kopii bezpieczeństwa.  Backup powinien nastąpic automatycznie
 kiedy twoj PC zostanie podłączony do sieci.  Powinieneś skontaktować się
 z pomocą techniczną jeżeli:
 
-  - Twój PC jest cały czas podłączony , co oznacza ze wysteuje problem z konfiguracją 
+  - Twój PC jest cały czas podłączony , co oznacza ze wysteuje problem z konfiguracją
     uniemożliwiający tworzenie kopii.
 
   - Nie chcesz aby kopie były wykonywane i nie chcesz tych wiadomośći.
@@ -1342,7 +1370,7 @@ Drogi $userName,
 
 Twój PC ($host) nie był pomyślnie zarchiwizowany przez $days dni.
 Twój PC był poprawnie zarchiwizowany $numBackups razy, od $firstTime do $days
-temu.  Wykonywanie kopii bezpieczeństwa powinno nastąpić automatycznie po 
+temu.  Wykonywanie kopii bezpieczeństwa powinno nastąpić automatycznie po
 podłączeniu do śieci.
 
 Jeżeli twoj PC był podłączony więcej niż kilka godzin do
@@ -1370,7 +1398,7 @@ $headers
 Dear $userName,
 
 The Outlook files on your PC have $howLong.
-These files contain all your email, attachments, contact and calendar           
+These files contain all your email, attachments, contact and calendar
 information.  Your PC has been correctly backed up $numBackups times from
 $firstTime to $lastTime days ago.  However, Outlook locks all its files when
 it is running, preventing these files from being backed up.
@@ -1379,7 +1407,7 @@ It is recommended you backup the Outlook files when you are connected
 to the network by exiting Outlook and all other applications, and,
 using just your browser, go to this link:
 
-    $CgiURL?host=$host               
+    $CgiURL?host=$host
 
 Select "Start Incr Backup" twice to start a new incremental backup.
 You can select "Return to $host page" and then hit "reload" to check
@@ -1391,7 +1419,7 @@ BackupPC Genie
 https://backuppc.github.io/backuppc
 EOF
 
-$Lang{howLong_not_been_backed_up} = "utworzenie kopii nie zostało zakonczone pomyślnie";
+$Lang{howLong_not_been_backed_up}               = "utworzenie kopii nie zostało zakonczone pomyślnie";
 $Lang{howLong_not_been_backed_up_for_days_days} = "Kopia nie była tworzona od \$days dni";
 
 #######################################################################
@@ -1406,69 +1434,70 @@ Calkowity rozmiar/GiB: \$fullSize;
 Prędkość MB/sek: \$fullRate;
 Ilość Inkr: \$incrCnt;
 Inkr wiek/Dni: \$incrAge;
-Status: \$host_state;
-Wyłączone: \$host_disabled;
-Ostatnia próba: \$host_last_attempt;
+Status: \$hostState;
+Wyłączone: \$hostDisabled;
+Ostatnia próba: \$hostLastAttempt;
 EOF
 
 #######################################################################
 # Configuration editor strings
 #######################################################################
 
-$Lang{Only_privileged_users_can_edit_config_files} = "Tylko uprzywilejowani uzytwkonicy mogą edytować pliki konfiguracyjne.";
+$Lang{Only_privileged_users_can_edit_config_files} =
+  "Tylko uprzywilejowani uzytwkonicy mogą edytować pliki konfiguracyjne.";
 $Lang{CfgEdit_Edit_Config} = "Edytuj konfigurację";
 $Lang{CfgEdit_Edit_Hosts}  = "Edytuj Hosty";
 
-$Lang{CfgEdit_Title_Server} = "Serwer";
-$Lang{CfgEdit_Title_General_Parameters} = "Parametry Ogólne";
-$Lang{CfgEdit_Title_Wakeup_Schedule} = "Plan pobudek";
-$Lang{CfgEdit_Title_Concurrent_Jobs} = "Prace Równoległe";
-$Lang{CfgEdit_Title_Pool_Filesystem_Limits} = "Limity puli systemu plików";
-$Lang{CfgEdit_Title_Other_Parameters} = "Inne Parametry";
-$Lang{CfgEdit_Title_Remote_Apache_Settings} = "Zdalne ustawienia Apache";
-$Lang{CfgEdit_Title_Program_Paths} = "Ścieżki Programów";
-$Lang{CfgEdit_Title_Install_Paths} = "Ścieżki Instalacji";
-$Lang{CfgEdit_Title_Email} = "Email";
-$Lang{CfgEdit_Title_Email_settings} = "Ustawienia Email";
-$Lang{CfgEdit_Title_Email_User_Messages} = "Wiadomości Email do użytwkoników";
-$Lang{CfgEdit_Title_CGI} = "CGI";
-$Lang{CfgEdit_Title_Admin_Privileges} = "Prawa dostępu Admina";
-$Lang{CfgEdit_Title_Page_Rendering} = "Tworzenie strony";
-$Lang{CfgEdit_Title_Paths} = "Ścieżki";
-$Lang{CfgEdit_Title_User_URLs} = "URLe użytkownika";
-$Lang{CfgEdit_Title_User_Config_Editing} = "Edytowanie konfiguracji użytkownika";
-$Lang{CfgEdit_Title_Xfer} = "Xfer";
-$Lang{CfgEdit_Title_Xfer_Settings} = "Ustawienia Xfer";
-$Lang{CfgEdit_Title_Ftp_Settings} = "Ustawienia FTP";
-$Lang{CfgEdit_Title_Smb_Settings} = "Ustawienia Smb";
-$Lang{CfgEdit_Title_Tar_Settings} = "Ustawienia Tar";
-$Lang{CfgEdit_Title_Rsync_Settings} = "Ustawienia Rsync";
-$Lang{CfgEdit_Title_Rsyncd_Settings} = "Ustawienia Rsyncd";
-$Lang{CfgEdit_Title_Archive_Settings} = "Ustawienia Archiwizacji";
-$Lang{CfgEdit_Title_Include_Exclude} = "Dodaj/Usuń";
-$Lang{CfgEdit_Title_Smb_Paths_Commands} = "Ściezki/Polecenia Smb";
-$Lang{CfgEdit_Title_Tar_Paths_Commands} = "Ściezki/Polecenia Tar";
+$Lang{CfgEdit_Title_Server}                    = "Serwer";
+$Lang{CfgEdit_Title_General_Parameters}        = "Parametry Ogólne";
+$Lang{CfgEdit_Title_Wakeup_Schedule}           = "Plan pobudek";
+$Lang{CfgEdit_Title_Concurrent_Jobs}           = "Prace Równoległe";
+$Lang{CfgEdit_Title_Pool_Filesystem_Limits}    = "Limity puli systemu plików";
+$Lang{CfgEdit_Title_Other_Parameters}          = "Inne Parametry";
+$Lang{CfgEdit_Title_Remote_Apache_Settings}    = "Zdalne ustawienia Apache";
+$Lang{CfgEdit_Title_Program_Paths}             = "Ścieżki Programów";
+$Lang{CfgEdit_Title_Install_Paths}             = "Ścieżki Instalacji";
+$Lang{CfgEdit_Title_Email}                     = "Email";
+$Lang{CfgEdit_Title_Email_settings}            = "Ustawienia Email";
+$Lang{CfgEdit_Title_Email_User_Messages}       = "Wiadomości Email do użytwkoników";
+$Lang{CfgEdit_Title_CGI}                       = "CGI";
+$Lang{CfgEdit_Title_Admin_Privileges}          = "Prawa dostępu Admina";
+$Lang{CfgEdit_Title_Page_Rendering}            = "Tworzenie strony";
+$Lang{CfgEdit_Title_Paths}                     = "Ścieżki";
+$Lang{CfgEdit_Title_User_URLs}                 = "URLe użytkownika";
+$Lang{CfgEdit_Title_User_Config_Editing}       = "Edytowanie konfiguracji użytkownika";
+$Lang{CfgEdit_Title_Xfer}                      = "Xfer";
+$Lang{CfgEdit_Title_Xfer_Settings}             = "Ustawienia Xfer";
+$Lang{CfgEdit_Title_Ftp_Settings}              = "Ustawienia FTP";
+$Lang{CfgEdit_Title_Smb_Settings}              = "Ustawienia Smb";
+$Lang{CfgEdit_Title_Tar_Settings}              = "Ustawienia Tar";
+$Lang{CfgEdit_Title_Rsync_Settings}            = "Ustawienia Rsync";
+$Lang{CfgEdit_Title_Rsyncd_Settings}           = "Ustawienia Rsyncd";
+$Lang{CfgEdit_Title_Archive_Settings}          = "Ustawienia Archiwizacji";
+$Lang{CfgEdit_Title_Include_Exclude}           = "Dodaj/Usuń";
+$Lang{CfgEdit_Title_Smb_Paths_Commands}        = "Ściezki/Polecenia Smb";
+$Lang{CfgEdit_Title_Tar_Paths_Commands}        = "Ściezki/Polecenia Tar";
 $Lang{CfgEdit_Title_Rsync_Paths_Commands_Args} = "Ściezki/Polecenia/Argumenty Rsync";
-$Lang{CfgEdit_Title_Rsyncd_Port_Args} = "Porty/Argumenty Rsyncds";
-$Lang{CfgEdit_Title_Archive_Paths_Commands} = "Ściezki/PoleceniaArchive";
-$Lang{CfgEdit_Title_Schedule} = "Harmonogram";
-$Lang{CfgEdit_Title_Full_Backups} = "Pełne Kopie";
-$Lang{CfgEdit_Title_Incremental_Backups} = "Kopie Inkrementalne";
-$Lang{CfgEdit_Title_Blackouts} = "Przeciążenia";
-$Lang{CfgEdit_Title_Other} = "Inne";
-$Lang{CfgEdit_Title_Backup_Settings} = "Ustawienia Kopii";
-$Lang{CfgEdit_Title_Client_Lookup} = "Sprawdzenie klienta";
-$Lang{CfgEdit_Title_User_Commands} = "Polecenia dla użytkownika";
-$Lang{CfgEdit_Title_Hosts} = "Hosty";
+$Lang{CfgEdit_Title_Rsyncd_Port_Args}          = "Porty/Argumenty Rsyncds";
+$Lang{CfgEdit_Title_Archive_Paths_Commands}    = "Ściezki/PoleceniaArchive";
+$Lang{CfgEdit_Title_Schedule}                  = "Harmonogram";
+$Lang{CfgEdit_Title_Full_Backups}              = "Pełne Kopie";
+$Lang{CfgEdit_Title_Incremental_Backups}       = "Kopie Inkrementalne";
+$Lang{CfgEdit_Title_Blackouts}                 = "Przeciążenia";
+$Lang{CfgEdit_Title_Other}                     = "Inne";
+$Lang{CfgEdit_Title_Backup_Settings}           = "Ustawienia Kopii";
+$Lang{CfgEdit_Title_Client_Lookup}             = "Sprawdzenie klienta";
+$Lang{CfgEdit_Title_User_Commands}             = "Polecenia dla użytkownika";
+$Lang{CfgEdit_Title_Hosts}                     = "Hosty";
 
 $Lang{CfgEdit_Hosts_Comment} = <<EOF;
 Aby dodać nowego hosta, zaznacz "Dodaj" i podaj jego nazwę.  Aby
 skopiowac ustawienia z innego hosta, wpisz nazwę hosta jako
-NOWYHOST=KOPIOWANYHOST.  Takie ustawienie spowoduje nadpisanie 
+NOWYHOST=KOPIOWANYHOST.  Takie ustawienie spowoduje nadpisanie
 konfiguracji dla NOWYHOST .  Możesz zrobic to także dla istniejacych
-już hostów.  Aby skasować hosta, po prostu naciśnij "Kasuj".  "Dodaj", "Skasuj",
+już hostów.  Aby skasować hosta, po prostu naciśnij "KasujDodaj", "Skasuj",
 oraz kopia konfiguracji, nie zadziała puki nie naciśniesz "Zapisz".
-Także zadna z usuniętych kopii hostów,więc jeżeli przypadkowo skasujesz coś, 
+Także zadna z usuniętych kopii hostów,więc jeżeli przypadkowo skasujesz coś,
 po prostu znowu ją dodaj.  Aby całkowicie usunąć kopie bezpieczeństwa
 danego hosta, musisz manualnie usunąć pliki z katalogu \$topDir/pc/HOST
 EOF
@@ -1484,44 +1513,30 @@ Notka: Sprawdź opcję "Nadpisz" jeżeli chcesz zmienić wartość specificzną 
 <p>
 EOF
 
-$Lang{CfgEdit_Button_Save}     = "Zapisz";
-$Lang{CfgEdit_Button_Insert}   = "Wstaw";
-$Lang{CfgEdit_Button_Delete}   = "Kasuj";
-$Lang{CfgEdit_Button_Add}      = "Dodaj";
-$Lang{CfgEdit_Button_Override} = "Nadpisz";
-$Lang{CfgEdit_Button_New_Key}  = "Nowy Klucz";
+$Lang{CfgEdit_Button_Save}      = "Zapisz";
+$Lang{CfgEdit_Button_Insert}    = "Wstaw";
+$Lang{CfgEdit_Button_Delete}    = "Kasuj";
+$Lang{CfgEdit_Button_Add}       = "Dodaj";
+$Lang{CfgEdit_Button_Override}  = "Nadpisz";
+$Lang{CfgEdit_Button_New_Key}   = "Nowy Klucz";
 $Lang{CfgEdit_Button_New_Share} = "New ShareName or '*'";
 
-$Lang{CfgEdit_Error_No_Save}
-            = "Błąd: Nie zapisano z powodu błędów";
-$Lang{CfgEdit_Error__must_be_an_integer}
-            = "Błąd: \$var musi być liczbą całkowitą";
-$Lang{CfgEdit_Error__must_be_real_valued_number}
-            = "Błąd: \$var musi być liczbą rzeczywistą";
-$Lang{CfgEdit_Error__entry__must_be_an_integer}
-            = "Błąd: \$var wpis \$k musi być liczbą całkowitą";
-$Lang{CfgEdit_Error__entry__must_be_real_valued_number}
-            = "Błąd: \$var wpis \$k musi być liczbą rzeczywistą";
-$Lang{CfgEdit_Error__must_be_executable_program}
-            = "Błąd: \$var musi być poprawną ścieżką do programu wykonywalnego";
-$Lang{CfgEdit_Error__must_be_valid_option}
-            = "Błąd: \$var musi być poprawną opcją";
-$Lang{CfgEdit_Error_Copy_host_does_not_exist}
-            = "Kopiowany host \$copyHost nie istnieje; tworzę nową nazwę \$fullHost.  Skasuj ją jeżeli to nie to co chciałeś.";
+$Lang{CfgEdit_Error_No_Save}                            = "Błąd: Nie zapisano z powodu błędów";
+$Lang{CfgEdit_Error__must_be_an_integer}                = "Błąd: \$var musi być liczbą całkowitą";
+$Lang{CfgEdit_Error__must_be_real_valued_number}        = "Błąd: \$var musi być liczbą rzeczywistą";
+$Lang{CfgEdit_Error__entry__must_be_an_integer}         = "Błąd: \$var wpis \$k musi być liczbą całkowitą";
+$Lang{CfgEdit_Error__entry__must_be_real_valued_number} = "Błąd: \$var wpis \$k musi być liczbą rzeczywistą";
+$Lang{CfgEdit_Error__must_be_executable_program} = "Błąd: \$var musi być poprawną ścieżką do programu wykonywalnego";
+$Lang{CfgEdit_Error__must_be_valid_option}       = "Błąd: \$var musi być poprawną opcją";
+$Lang{CfgEdit_Error_Copy_host_does_not_exist} =
+  "Kopiowany host \$copyHost nie istnieje; tworzę nową nazwę \$fullHost.  Skasuj ją jeżeli to nie to co chciałeś.";
 
-$Lang{CfgEdit_Log_Copy_host_config}
-            = "Skopiowano konfigurację \$User z \$fromHost do \$host\n";
-$Lang{CfgEdit_Log_Delete_param}
-            = "\$User skasowany \$p z \$conf\n";
-$Lang{CfgEdit_Log_Add_param_value}
-            = "\$User dodany \$p do \$conf, ustawiono \$value\n";
-$Lang{CfgEdit_Log_Change_param_value}
-            = "\$User zmieniony \$p w \$conf na \$valueNew z \$valueOld\n";
-$Lang{CfgEdit_Log_Host_Delete}
-            = "\$User skasował host \$host\n";
-$Lang{CfgEdit_Log_Host_Change}
-            = "\$User z hosta \$host zmienił \$key z \$valueOld na \$valueNew\n";
-$Lang{CfgEdit_Log_Host_Add}
-            = "\$User dodał host \$host: \$value\n";
-  
+$Lang{CfgEdit_Log_Copy_host_config}   = "Skopiowano konfigurację \$User z \$fromHost do \$host\n";
+$Lang{CfgEdit_Log_Delete_param}       = "\$User skasowany \$p z \$conf\n";
+$Lang{CfgEdit_Log_Add_param_value}    = "\$User dodany \$p do \$conf, ustawiono \$value\n";
+$Lang{CfgEdit_Log_Change_param_value} = "\$User zmieniony \$p w \$conf na \$valueNew z \$valueOld\n";
+$Lang{CfgEdit_Log_Host_Delete}        = "\$User skasował host \$host\n";
+$Lang{CfgEdit_Log_Host_Change}        = "\$User z hosta \$host zmienił \$key z \$valueOld na \$valueNew\n";
+$Lang{CfgEdit_Log_Host_Add}           = "\$User dodał host \$host: \$value\n";
+
 #end of lang_en.pm

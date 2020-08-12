@@ -15,7 +15,7 @@
 #   Based on Archive::Zip::FileMember, Copyright (c) 2000 Ned Konz.
 #
 # COPYRIGHT
-#   Copyright (C) 2002-2013  Craig Barratt
+#   Copyright (C) 2002-2020  Craig Barratt
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@
 #
 #========================================================================
 #
-# Version 4.0.0alpha3, released 1 Dec 2013.
+# Version 4.3.3, released 5 Apr 2020.
 #
 # See http://backuppc.sourceforge.net.
 #
@@ -52,21 +52,24 @@ sub newFromFileNamed    # BackupPC::Zip::FileMember
     my $newName  = shift || $fileName;
     my $size     = shift;
     my $compress = shift;
+
     return undef unless ( stat($fileName) && -r _ && !-d _ );
     my $self = $class->new(@_);
     $self->fileName($newName);
     $self->{'externalFileName'}  = $fileName;
     $self->{'compressionMethod'} = COMPRESSION_STORED;
-    $self->{'compressedSize'} = $self->{'uncompressedSize'} = $size;
+    $self->{'compressedSize'}    = $self->{'uncompressedSize'} = $size;
     $self->{'fileCompressLevel'} = $compress;
-    $self->desiredCompressionMethod( ( $self->compressedSize() > 0 ) 
-	    ? COMPRESSION_DEFLATED
-	    : COMPRESSION_STORED );
-    $self->isTextFile( -T _ );
+    $self->desiredCompressionMethod(
+        ($self->compressedSize() > 0)
+        ? COMPRESSION_DEFLATED
+        : COMPRESSION_STORED
+    );
+    $self->isTextFile(-T _ );
     return $self;
 }
 
-sub rewindData		# BackupPC::Zip::FileMember
+sub rewindData    # BackupPC::Zip::FileMember
 {
     my $self = shift;
 
@@ -78,22 +81,20 @@ sub rewindData		# BackupPC::Zip::FileMember
     return AZ_OK;
 }
 
-sub fh			# BackupPC::Zip::FileMember
+sub fh            # BackupPC::Zip::FileMember
 {
     my $self = shift;
-    $self->_openFile() if !defined( $self->{'bpcfh'} );
+    $self->_openFile() if !defined($self->{'bpcfh'});
     return $self->{'bpcfh'};
 }
 
 # opens my file handle from my file name
-sub _openFile		# BackupPC::Zip::FileMember
+sub _openFile     # BackupPC::Zip::FileMember
 {
     my $self = shift;
-    my ( $fh ) = BackupPC::XS::FileZIO::open($self->externalFileName(), 0,
-					 $self->{'fileCompressLevel'});
-    if ( !defined($fh) )
-    {
-        _ioError( "Can't open", $self->externalFileName() );
+    my($fh) = BackupPC::XS::FileZIO::open($self->externalFileName(), 0, $self->{'fileCompressLevel'});
+    if ( !defined($fh) ) {
+        _ioError("Can't open", $self->externalFileName());
         return undef;
     }
     $self->{'bpcfh'} = $fh;
@@ -101,7 +102,7 @@ sub _openFile		# BackupPC::Zip::FileMember
 }
 
 # Closes my file handle
-sub _closeFile		# BackupPC::Zip::FileMember
+sub _closeFile    # BackupPC::Zip::FileMember
 {
     my $self = shift;
     $self->{'bpcfh'}->close() if ( defined($self->{'bpcfh'}) );
@@ -109,7 +110,7 @@ sub _closeFile		# BackupPC::Zip::FileMember
 }
 
 # Make sure I close my file handle
-sub endRead		# BackupPC::Zip::FileMember
+sub endRead       # BackupPC::Zip::FileMember
 {
     my $self = shift;
     $self->_closeFile();
@@ -119,16 +120,16 @@ sub endRead		# BackupPC::Zip::FileMember
 # Return bytes read. Note that first parameter is a ref to a buffer.
 # my $data;
 # my ($bytesRead, $status) = $self->readRawChunk( \$data, $chunkSize );
-sub _readRawChunk	# BackupPC::Zip::FileMember
+sub _readRawChunk    # BackupPC::Zip::FileMember
 {
-    my ( $self, $dataRef, $chunkSize ) = @_;
-    return ( 0, AZ_OK ) unless $chunkSize;
-    my $bytesRead = $self->fh()->read( $dataRef, $chunkSize )
-	    or return ( 0, _ioError("reading data") );
-    return ( $bytesRead, AZ_OK );
+    my($self, $dataRef, $chunkSize) = @_;
+    return (0, AZ_OK) unless $chunkSize;
+    my $bytesRead = $self->fh()->read($dataRef, $chunkSize)
+      or return (0, _ioError("reading data"));
+    return ($bytesRead, AZ_OK);
 }
 
-sub extractToFileNamed	# BackupPC::Zip::FileMember
+sub extractToFileNamed    # BackupPC::Zip::FileMember
 {
     die("BackupPC::Zip::FileMember::extractToFileNamed not supported\n");
 }

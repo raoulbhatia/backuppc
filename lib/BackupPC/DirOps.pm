@@ -11,7 +11,7 @@
 #   Craig Barratt  <cbarratt@users.sourceforge.net>
 #
 # COPYRIGHT
-#   Copyright (C) 2001-2017  Craig Barratt
+#   Copyright (C) 2001-2020  Craig Barratt
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 #
 #========================================================================
 #
-# Version 4.1.4, released 24 Nov 2017.
+# Version 4.3.3, released 5 Apr 2020.
 #
 # See http://backuppc.sourceforge.net.
 #
@@ -53,35 +53,35 @@ use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 require Exporter;
 require DynaLoader;
 
-@ISA = qw(Exporter DynaLoader);
+@ISA       = qw(Exporter DynaLoader);
 @EXPORT_OK = qw( BPC_DT_UNKNOWN
-                 BPC_DT_FIFO
-                 BPC_DT_CHR
-                 BPC_DT_DIR
-                 BPC_DT_BLK
-                 BPC_DT_REG
-                 BPC_DT_LNK
-                 BPC_DT_SOCK
-               );
-@EXPORT = qw( );
+  BPC_DT_FIFO
+  BPC_DT_CHR
+  BPC_DT_DIR
+  BPC_DT_BLK
+  BPC_DT_REG
+  BPC_DT_LNK
+  BPC_DT_SOCK
+);
+@EXPORT      = qw( );
 %EXPORT_TAGS = ('BPC_DT_ALL' => [@EXPORT, @EXPORT_OK]);
 
 BEGIN {
     eval "use IO::Dirent qw( readdirent );";
     $IODirentLoaded = 1 if ( !$@ );
-};
+}
 
 #
 # The need to match the constants in IO::Dirent
 #
-use constant BPC_DT_UNKNOWN =>   0;
-use constant BPC_DT_FIFO    =>   1;    ## named pipe (fifo)
-use constant BPC_DT_CHR     =>   2;    ## character special
-use constant BPC_DT_DIR     =>   4;    ## directory
-use constant BPC_DT_BLK     =>   6;    ## block special
-use constant BPC_DT_REG     =>   8;    ## regular
-use constant BPC_DT_LNK     =>  10;    ## symbolic link
-use constant BPC_DT_SOCK    =>  12;    ## socket
+use constant BPC_DT_UNKNOWN => 0;
+use constant BPC_DT_FIFO    => 1;     ## named pipe (fifo)
+use constant BPC_DT_CHR     => 2;     ## character special
+use constant BPC_DT_DIR     => 4;     ## directory
+use constant BPC_DT_BLK     => 6;     ## block special
+use constant BPC_DT_REG     => 8;     ## regular
+use constant BPC_DT_LNK     => 10;    ## symbolic link
+use constant BPC_DT_SOCK    => 12;    ## socket
 
 #
 # Read a directory and return the entries in sorted inode order.
@@ -108,7 +108,7 @@ sub dirRead
     my(@entries, $addInode);
 
     from_to($path, "utf8", $need->{charsetLegacy})
-                        if ( $need->{charsetLegacy} ne "" );
+      if ( $need->{charsetLegacy} ne "" );
     return [] if ( !opendir(my $fh, $path) );
     if ( $IODirentLoaded && !$IODirentOk ) {
         #
@@ -118,21 +118,19 @@ sub dirRead
         #
         # Also create a temporary file to make sure the inode matches.
         #
-        my $tempTestFile = ".TestFileDirent.$$";
+        my $tempTestFile     = ".TestFileDirent.$$";
         my $fullTempTestFile = $bpc->{TopDir} . "/$tempTestFile";
         if ( open(my $fh, ">", $fullTempTestFile) ) {
             close($fh);
         }
         if ( opendir(my $fh, $bpc->{TopDir}) ) {
             foreach my $e ( readdirent($fh) ) {
-                if ( $e->{name} eq "."
-                        && $e->{type} == BPC_DT_DIR
-                        && $e->{inode} == (stat($bpc->{TopDir}))[1] ) {
+                if ( $e->{name} eq "." && $e->{type} == BPC_DT_DIR && $e->{inode} == (stat($bpc->{TopDir}))[1] ) {
                     $IODirentOk |= 0x1;
                 }
-                if ( $e->{name} eq $tempTestFile
-                        && $e->{type} == BPC_DT_REG
-                        && $e->{inode} == (stat($fullTempTestFile))[1] ) {
+                if (   $e->{name} eq $tempTestFile
+                    && $e->{type} == BPC_DT_REG
+                    && $e->{inode} == (stat($fullTempTestFile))[1] ) {
                     $IODirentOk |= 0x2;
                 }
             }
@@ -149,16 +147,17 @@ sub dirRead
     }
     if ( $IODirentOk ) {
         @entries = sort({ $a->{inode} <=> $b->{inode} } readdirent($fh));
-        map { $_->{type} = 0 + $_->{type} } @entries;   # make type numeric
+        map { $_->{type} = 0 + $_->{type} } @entries;    # make type numeric
     } else {
-        @entries = map { { name => $_} } readdir($fh);
+        @entries = map { {name => $_} } readdir($fh);
     }
     closedir($fh);
     if ( defined($need) && %$need > 0 ) {
         for ( my $i = 0 ; $i < @entries ; $i++ ) {
-            next if ( (!$need->{inode} || defined($entries[$i]{inode}))
-                   && (!$need->{type}  || defined($entries[$i]{type}))
-                   && (!$need->{nlink} || defined($entries[$i]{nlink})) );
+            next
+              if ( (!$need->{inode} || defined($entries[$i]{inode}))
+                && (!$need->{type}  || defined($entries[$i]{type}))
+                && (!$need->{nlink} || defined($entries[$i]{nlink})) );
             my @s = stat("$path/$entries[$i]{name}");
             $entries[$i]{nlink} = $s[3] if ( $need->{nlink} );
             if ( $need->{inode} && !defined($entries[$i]{inode}) ) {
@@ -283,7 +282,7 @@ sub RmTreeQuietInner
     }
     foreach $root ( @$roots ) {
         my($path, $name);
-	$root =~ s{/+$}{};
+        $root =~ s{/+$}{};
         if ( $root =~ m{(.*)/(.*)} ) {
             $path = $1;
             $name = $2;
@@ -310,30 +309,34 @@ sub RmTreeQuietInner
                 if ( !$attr->read(".", $name) ) {
                     print(STDERR "Can't read attribute file in $cwd/$path/$name\n");
                 }
-                my $attrAll = $attr->get();
-                my $d = $attr->digest();
+                my $fileCnt = 0;
+                my $d       = $attr->digest();
 
                 $deltaInfo->update($compress, $d, -1) if ( $deltaInfo && length($d) );
                 if ( $compress >= 0 ) {
-                    foreach my $fileUM ( keys(%$attrAll) ) {
-                        my $a = $attrAll->{$fileUM};
+                    my $idx = 0;
+                    my $a;
+                    while ( 1 ) {
+                        ($a, $idx) = $attr->iterate($idx);
+                        last if ( !defined($a) );
+                        $fileCnt++;
                         $deltaInfo->update($compress, $a->{digest}, -1)
-                                                        if ( $deltaInfo && length($a->{digest}) );
-			next if ( $a->{nlinks} == 0 || !$deltaInfo || !$attrCache );
+                          if ( $deltaInfo && length($a->{digest}) );
+                        next if ( $a->{nlinks} == 0 || !$deltaInfo || !$attrCache );
                         #
                         # If caller supplied deltaInfo and attrCache then updated the inodes too
                         #
-			my $aInode = $attrCache->getInode($a->{inode});
-			$aInode->{nlinks}--;
-			if ( $aInode->{nlinks} <= 0 ) {
-			    $deltaInfo->update($compress, $aInode->{digest}, -1);
-			    $attrCache->deleteInode($a->{inode});
-			} else {
-			    $attrCache->setInode($a->{inode}, $aInode);
-			}
+                        my $aInode = $attrCache->getInode($a->{inode});
+                        $aInode->{nlinks}--;
+                        if ( $aInode->{nlinks} <= 0 ) {
+                            $deltaInfo->update($compress, $aInode->{digest}, -1);
+                            $attrCache->deleteInode($a->{inode});
+                        } else {
+                            $attrCache->setInode($a->{inode}, $aInode);
+                        }
                     }
                 }
-                &$progressCB(scalar(keys(%$attrAll))) if ( ref($progressCB) eq 'CODE' );
+                &$progressCB($fileCnt) if ( ref($progressCB) eq 'CODE' );
             } else {
                 #
                 # the callback should know it's directories, not files in the non-ref
@@ -350,30 +353,31 @@ sub RmTreeQuietInner
             &$progressCB(1) if ( ref($progressCB) eq 'CODE' );
         }
 
-	#
-	# Try first to simply unlink the file: this avoids an
-	# extra stat for every file.  If it fails (which it
-	# will for directories), check if it is a directory and
-	# then recurse.
-	#
-	if ( !unlink($name) ) {
+        #
+        # Try first to simply unlink the file: this avoids an
+        # extra stat for every file.  If it fails (which it
+        # will for directories), check if it is a directory and
+        # then recurse.
+        #
+        if ( !unlink($name) ) {
             if ( -d $name ) {
                 if ( !chdir($name) ) {
                     print(STDERR "RmTreeQuietInner: can't chdir to $name (while removing $root)\n");
                     return 1;
                 }
                 my $d = BackupPC::DirOps::dirReadNames($bpc, ".");
-		if ( !defined($d) ) {
-		    print(STDERR "Can't read $cwd/$path/$name: $!\n");
-		} else {
-		    @files = grep $_ !~ /^\.{1,2}$/, @$d;
-		    BackupPC::DirOps::RmTreeQuietInner($bpc, "$cwd/$name", \@files, $compress, $deltaInfo, $attrCache, $progressCB);
-		    if ( !chdir("..") ) {
+                if ( !defined($d) ) {
+                    print(STDERR "Can't read $cwd/$path/$name: $!\n");
+                } else {
+                    @files = grep $_ !~ /^\.{1,2}$/, @$d;
+                    BackupPC::DirOps::RmTreeQuietInner($bpc, "$cwd/$name", \@files, $compress, $deltaInfo, $attrCache,
+                        $progressCB);
+                    if ( !chdir("..") ) {
                         print(STDERR "RmTreeQuietInner: can't chdir .. (while removing $root)\n");
                         return 1;
                     }
-		    rmdir($name) || rmdir($name);
-		}
+                    rmdir($name) || rmdir($name);
+                }
             } else {
                 #
                 # just try again

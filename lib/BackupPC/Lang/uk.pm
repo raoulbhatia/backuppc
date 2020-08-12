@@ -17,23 +17,25 @@
 #
 
 use utf8;
+
 # --------------------------------
 
-$Lang{Start_Archive} = "Запустити архівування";
+$Lang{Start_Archive}        = "Запустити архівування";
 $Lang{Stop_Dequeue_Archive} = "Припинити/видалити з черги";
-$Lang{Start_Full_Backup} = " Зробити повний архів";
-$Lang{Start_Incr_Backup} = "Зробити інкрементальний архів";
-$Lang{Stop_Dequeue_Backup} = "Припилити/видалити з черги";
-$Lang{Restore} = "Відновити";
+$Lang{Start_Full_Backup}    = " Зробити повний архів";
+$Lang{Start_Incr_Backup}    = "Зробити інкрементальний архів";
+$Lang{Stop_Dequeue_Backup}  = "Припилити/видалити з черги";
+$Lang{Restore}              = "Відновити";
 
 $Lang{Type_full} = "повний";
 $Lang{Type_incr} = "інкрементальний";
 
 # -----
 
-$Lang{Only_privileged_users_can_view_admin_options} = "Тільки привілейовані користувачі можуть бачити адмінські налаштування.";
-$Lang{H_Admin_Options} = "BackupPC Сервер: Адмінські налаштування";
-$Lang{Admin_Options} = "Адмінські налаштування";
+$Lang{Only_privileged_users_can_view_admin_options} =
+  "Тільки привілейовані користувачі можуть бачити адмінські налаштування.";
+$Lang{H_Admin_Options}    = "BackupPC Сервер: Адмінські налаштування";
+$Lang{Admin_Options}      = "Адмінські налаштування";
 $Lang{Admin_Options_Page} = <<EOF;
 \${h1(qq{$Lang{Admin_Options}})}
 <br>
@@ -55,7 +57,7 @@ $Lang{Admin_Options_Page} = <<EOF;
 -->
 EOF
 
-$Lang{Unable_to_connect_to_BackupPC_server} = "Неможливо зв'язатися з сервером BackupPC";
+$Lang{Unable_to_connect_to_BackupPC_server}               = "Неможливо зв'язатися з сервером BackupPC";
 $Lang{Unable_to_connect_to_BackupPC_server_error_message} = <<EOF;
 This CGI script (\$MyURL) is unable to connect to the BackupPC
 server on \$Conf{ServerHost} port \$Conf{ServerPort}.<br>
@@ -79,7 +81,7 @@ EOF
 
 $Lang{H_BackupPC_Server_Status} = "Статус сервера BackupPC";
 
-$Lang{BackupPC_Server_Status_General_Info}= <<EOF;
+$Lang{BackupPC_Server_Status_General_Info} = <<EOF;
 \${h2(\"Загальна інформація про сервер\")}
 
 <ul>
@@ -143,8 +145,8 @@ EOF
 
 # --------------------------------
 $Lang{BackupPC__Server_Summary} = "BackupPC: Зведена інформація по хостах";
-$Lang{BackupPC__Archive} = "BackupPC: Архів";
-$Lang{BackupPC_Summary} = <<EOF;
+$Lang{BackupPC__Archive}        = "BackupPC: Архів";
+$Lang{BackupPC_Summary}         = <<EOF;
 
 \${h1(qq{$Lang{BackupPC__Server_Summary}})}
 <p>
@@ -312,15 +314,16 @@ EOF
 $Lang{Pool_Stat} = <<EOF;
         <li>Пул займає \${poolSize}GiB в тому числі \$info->{"\${name}FileCnt"} файлів
             та \$info->{"\${name}DirCnt"} тек (на \$poolTime),
-        <li>Під час хешування пулу виявлено \$info->{"\${name}FileCntRep"} файлів що 
+        <li>Під час хешування пулу виявлено \$info->{"\${name}FileCntRep"} файлів що
             повторюються з найбільшою кількістю повторень \$info->{"\${name}FileRepMax"},
-        <li>Під час нічного очищення видалено \$info->{"\${name}FileCntRm"} файлів 
+        <li>Під час нічного очищення видалено \$info->{"\${name}FileCntRm"} файлів
             загальним розміром \${poolRmSize}GiB (близько \$poolTime),
 EOF
 
 # --------------------------------
-$Lang{BackupPC__Backup_Requested_on__host} = "BackupPC: Запит на резервне копіювання з \$host";
+$Lang{BackupPC__Backup_Requested_on__host}              = "BackupPC: Запит на резервне копіювання з \$host";
 $Lang{BackupPC__Delete_Requested_for_a_backup_of__host} = "BackupPC: Delete Requested for a backup of \$host";
+
 # --------------------------------
 $Lang{REPLY_FROM_SERVER} = <<EOF;
 \${h1(\$str)}
@@ -329,8 +332,10 @@ $Lang{REPLY_FROM_SERVER} = <<EOF;
 <p>
 Повернутися на сторінку хоста <a href="\$MyURL?host=\$host">\$host </a>.
 EOF
+
 # --------------------------------
 $Lang{BackupPC__Start_Backup_Confirm_on__host} = "BackupPC: Start Backup Confirm on \$host";
+
 # --------------------------------
 $Lang{Are_you_sure_start} = <<EOF;
 \${h1("Ви впевнені?")}
@@ -349,8 +354,10 @@ $Lang{Are_you_sure_start} = <<EOF;
 <input type="submit" value="No" name="ignore">
 </form>
 EOF
+
 # --------------------------------
 $Lang{BackupPC__Stop_Backup_Confirm_on__host} = "BackupPC: Stop Backup Confirm on \$host";
+
 # --------------------------------
 $Lang{Are_you_sure_stop} = <<EOF;
 
@@ -374,12 +381,16 @@ Also, please don\'t start another backup for
 </form>
 
 EOF
+
 # --------------------------------
 $Lang{Only_privileged_users_can_view_queues_} = "Тільки привілейовані користувачі можуть переглядати черги.";
+
 # --------------------------------
 $Lang{Only_privileged_users_can_archive} = "Тільки привілейовані користувачі можуть створювати резервну копію.";
+
 # --------------------------------
 $Lang{BackupPC__Queue_Summary} = "BackupPC: Зведена інформація по чергам завдань";
+
 # --------------------------------
 $Lang{Backup_Queue_Summary} = <<EOF;
 \${h1("Зведена інформація по чергам завдань")}
@@ -422,10 +433,11 @@ EOF
 
 # --------------------------------
 $Lang{Backup_PC__Log_File__file} = "BackupPC: Файли \$file";
-$Lang{Log_File__file__comment} = <<EOF;
+$Lang{Log_File__file__comment}   = <<EOF;
 \${h1("Файл \$file \$comment")}
 <p>
 EOF
+
 # --------------------------------
 $Lang{Contents_of_log_file} = <<EOF;
 Вміст файлу <tt>\$file</tt>, було змінено \$mtimeStr \$comment
@@ -433,12 +445,13 @@ EOF
 
 # --------------------------------
 $Lang{skipped__skipped_lines} = "[ пропущено \$skipped рядків ]\n";
+
 # --------------------------------
 $Lang{_pre___Can_t_open_log_file__file} = "<pre>\nНе вдається відкрити файл логу \$file\n";
 
 # --------------------------------
 $Lang{BackupPC__Log_File_History} = "BackupPC: Історія лог-файлу";
-$Lang{Log_File_History__hdr} = <<EOF;
+$Lang{Log_File_History__hdr}      = <<EOF;
 \${h1("Історія лог-файлу \$hdr")}
 <p>
 <table class="tableStnd sortable" border cellspacing="1" cellpadding="3" width="80%">
@@ -461,18 +474,17 @@ $Lang{Recent_Email_Summary} = <<EOF;
 \$str
 </table>
 EOF
- 
 
 # ------------------------------
 $Lang{Browse_backup__num_for__host} = "BackupPC: Продивитися резервну копію \$num для \$host";
 
 # ------------------------------
-$Lang{Restore_Options_for__host} = "BackupPC: Налаштування відновлення для \$host";
+$Lang{Restore_Options_for__host}  = "BackupPC: Налаштування відновлення для \$host";
 $Lang{Restore_Options_for__host2} = <<EOF;
 \${h1("Restore Options for \$host")}
 <p>
 You have selected the following files/directories from
-Ви позначили ластупні файли/теки з 
+Ви позначили ластупні файли/теки з
 ресурсу \$share, номер резервної копіїr #\$num:
 <ul>
 \$fileListStr
@@ -486,7 +498,7 @@ You have selected the following files/directories from
 EOF
 
 $Lang{Restore_Options_for__host_Option1} = <<EOF;
-Ви можете запустити відновлення файла прямо на 
+Ви можете запустити відновлення файла прямо на
 <b>\$directHost</b>.
 </p><p>
 <b>Увага!:</b> Всі існуючі файли будуть перезаписані!
@@ -540,7 +552,7 @@ $Lang{Option_2__Download_Zip_archive} = <<EOF;
 щоб продивитися або відновити будь-які файли.
 </p><p>
 <b>Увага:</b> в залежності від того, які файли/теки Ви позначили залежить розмір архіву.
-Процес його створення та звантаження може зайняти деякий час. Ви маєте бути впевнені, 
+Процес його створення та звантаження може зайняти деякий час. Ви маєте бути впевнені,
 що Вам вистачить місця на локальному диску для його збереження.
 </p>
 <form action="\$MyURL" method="post">
@@ -575,11 +587,10 @@ $Lang{Option_2__Download_Zip_archive2} = <<EOF;
 <p>
 Archive::Zip не встановлено тому Ви не можете звантажити
 zip-архів.
-Попросіть системного адміністратора встановити Archive::Zip з 
+Попросіть системного адміністратора встановити Archive::Zip з
 <a href="http://www.cpan.org">www.cpan.org</a>.
 </p>
 EOF
-
 
 # ------------------------------
 $Lang{Option_3__Download_Zip_archive} = <<EOF;
@@ -590,7 +601,7 @@ $Lang{Option_3__Download_Zip_archive} = <<EOF;
 щоб продивитися або відновити будь-які файли.
 </p><p>
 <b>Увага:</b> в залежності від того, які файли/теки Ви позначили залежить розмір архіву.
-Процес його створення та звантаження може зайняти деякий час. Ви маєте бути впевнені, 
+Процес його створення та звантаження може зайняти деякий час. Ви маєте бути впевнені,
 що Вам вистачить місця на локальному диску для його збереження.
 </p>
 <form action="\$MyURL" method="post">
@@ -606,7 +617,6 @@ $Lang{Option_3__Download_Zip_archive} = <<EOF;
 <input type="submit" value="Download Tar File" name="ignore">
 </form>
 EOF
-
 
 # ------------------------------
 $Lang{Restore_Confirm_on__host} = "BackupPC: Підтвердження відновлення на \$host";
@@ -640,10 +650,9 @@ $Lang{Are_you_sure} = <<EOF;
 </form>
 EOF
 
-
 # --------------------------
 $Lang{Restore_Requested_on__hostDest} = "BackupPC: Запит на відновлення до \$hostDest";
-$Lang{Reply_from_server_was___reply} = <<EOF;
+$Lang{Reply_from_server_was___reply}  = <<EOF;
 \${h1(\$str)}
 <p>
 Відповідь сервера була: \$reply
@@ -657,12 +666,12 @@ $Lang{BackupPC_Archive_Reply_from_server} = <<EOF;
 Відповідь сервера була: \$reply
 EOF
 
-
 # --------------------------------
 $Lang{BackupPC__Delete_Backup_Confirm__num_of__host} = "BackupPC: Delete Backup Confirm #\$num of \$host";
+
 # --------------------------------
-$Lang{A_filled} = "a filled";
-$Lang{An_unfilled} = "an unfilled";
+$Lang{A_filled}            = "a filled";
+$Lang{An_unfilled}         = "an unfilled";
 $Lang{Are_you_sure_delete} = <<EOF;
 \${h1("Are you sure?")}
 <p>
@@ -723,8 +732,9 @@ $Lang{Host__host_Backup_Summary2} = <<EOF;
     <td align="center"> Дата початку </td>
     <td align="center"> Тривалість/хв </td>
     <td align="center"> Вік/днів </td>
+    <td align="center"> Тримайте </td>
     \$deleteHdrStr
-    <td align="center"> Серверний шлях копії </td>
+    <td align="center"> Прокоментуйте </td>
 </tr>
 \$str
 </table>
@@ -794,7 +804,7 @@ $Lang{Host__host_Backup_Summary2} = <<EOF;
 </table>
 EOF
 
-$Lang{Host__host_Archive_Summary} = "BackupPC: Host \$host Archive Summary";
+$Lang{Host__host_Archive_Summary}  = "BackupPC: Host \$host Archive Summary";
 $Lang{Host__host_Archive_Summary2} = <<EOF;
 \${h1("Host \$host Archive Summary")}
 <p>
@@ -822,7 +832,7 @@ $Lang{Host__host_Archive_Summary2} = <<EOF;
 EOF
 
 # -------------------------
-$Lang{Error} = "BackupPC: Помилки";
+$Lang{Error}         = "BackupPC: Помилки";
 $Lang{Error____head} = <<EOF;
 \${h1("Помилка: \$head")}
 <p>\$mesg</p>
@@ -852,29 +862,42 @@ $Lang{Backup_browse_for__host} = <<EOF;
         }
       }
     }
-    
+
     function toggleThis(checkbox)
     {
        var cb = eval("document.form1."+checkbox);
-       cb.checked = !cb.checked;	
+       cb.checked = !cb.checked;
     }
 
 //-->
 </script>
 
-<form name="form0" method="post" action="\$MyURL">
-<input type="hidden" name="num" value="\$num">
-<input type="hidden" name="host" value="\$host">
-<input type="hidden" name="share" value="\${EscHTML(\$share)}">
-<input type="hidden" name="action" value="browse">
 <ul>
 <li> You are browsing backup #\$num, which started around \$backupTime
         (\$backupAge days ago),
 \$filledBackup
-<li> Увійти в текуy: <input type="text" name="dir" size="50" maxlength="4096" value="\${EscHTML(\$dir)}"> <input type="submit" value="\$Lang->{Go}" name="Submit">
+<li>
+<form name="formDir" method="post" action="\$MyURL">
+<input type="hidden" name="num" value="\$num">
+<input type="hidden" name="host" value="\$host">
+<input type="hidden" name="share" value="\${EscHTML(\$share)}">
+<input type="hidden" name="action" value="browse">
+Увійти в текуy: <input type="text" name="dir" size="60" maxlength="4096" value="\${EscHTML(\$dir)}">
+    <input type="submit" value="\$Lang->{Go}" name="Submit">
+</form>
+<li>
+<form name="formComment" method="post" action="\$MyURL">
+<input type="hidden" name="num" value="\$num">
+<input type="hidden" name="host" value="\$host">
+<input type="hidden" name="share" value="\${EscHTML(\$share)}">
+<input type="hidden" name="action" value="browse">
+Прокоментуйте: <input type="text" name="comment" class="inputCompact" size="60" maxlength="4096" value="\${EscHTML(\$comment)}">
+    <input type="submit" value="\$Lang->{CfgEdit_Button_Save}" name="SetComment">
+</form>
 <li> Натисніть на теку нижче для входу в неї,
 <li> Натисніть на файл нижче для його відновлення,
 <li> Ви можете переглянути резервну копію <a href="\$MyURL?action=dirHistory&host=\${EscURI(\$host)}&share=\$shareURI&dir=\$pathURI">history</a> of the current directory.
+\$share2pathStr
 </ul>
 </form>
 
@@ -909,6 +932,13 @@ This is now in the checkAll row
 </form>
 EOF
 
+$Lang{Browse_ClientShareName2Path} = <<EOF;
+<li> Mapping of share name to real client path (ClientShareName2Path):
+    <ul>
+\$share2pathStr
+    </ul>
+EOF
+
 # ------------------------------
 $Lang{DirHistory_backup_for__host} = "BackupPC: Історія резервних копій тек для \$host";
 
@@ -926,13 +956,13 @@ $Lang{DirHistory_for__host} = <<EOF;
 Резервних копіях:
 <ul>
 <li> Натисніть на номер резервної копії для повернення до перегляду рез. копій,
-<li> Натисніть на посилання на теку (\$Lang->{DirHistory_dirLink}) для переходу 
+<li> Натисніть на посилання на теку (\$Lang->{DirHistory_dirLink}) для переходу
      в цю теку,
 <li> Натисніть на посилання на версію файла (\$Lang->{DirHistory_fileLink}0,
      \$Lang->{DirHistory_fileLink}1, ...) для його звантаженняe,
 <li> Фали з однаковим вмістом мають однакову версію в усіх
       резервних копіях (PleaseTranslateThis: except between v3 and v4 backups),
-<li> Файли та теки, що відсутні в поточній резервній копії позначені 
+<li> Файли та теки, що відсутні в поточній резервній копії позначені
      порожнім прямокутником.
 <li> Файли однієї версії можуть відрізнятися атрибутами файлової системи.
      Виберіть номмер резервної копії для перегляду атрибутів.
@@ -989,7 +1019,7 @@ EOF
 # ------------------------------
 $Lang{Archive___num_details_for__host} = "BackupPC: Деталі архіву #\$num для \$host";
 
-$Lang{Archive___num_details_for__host2 } = <<EOF;
+$Lang{Archive___num_details_for__host2} = <<EOF;
 \${h1("Archive #\$num Details for \$host")}
 <p>
 <table class="tableStnd" border cellspacing="1" cellpadding="3" width="80%">
@@ -1021,54 +1051,51 @@ $Lang{Email_Summary} = "BackupPC: Зведена інформація по Email
 #  !! ERROR messages !!
 # -----------------------------------
 $Lang{BackupPC__Lib__new_failed__check_apache_error_log} = "BackupPC::Lib->new failed: check apache error_log\n";
-$Lang{Wrong_user__my_userid_is___} =  
-              "Неправильний користувач: мій userid  \$>, а не \$uid"
-            . "(\$Conf{BackupPCUser})\n";
+$Lang{Wrong_user__my_userid_is___} = "Неправильний користувач: мій userid  \$>, а не \$uid(\$Conf{BackupPCUser})\n";
+
 # $Lang{Only_privileged_users_can_view_PC_summaries} = "Only privileged users can view PC summaries.";
-$Lang{Only_privileged_users_can_stop_or_start_backups} = 
-                  "Тільки привілейований користувач може запустити резевне копіювання на"
-		. " \${EscHTML(\$host)}.";
-$Lang{Invalid_number__num} = "Неправильнмй номер \${EscHTML(\$In{num})}";
+$Lang{Only_privileged_users_can_stop_or_start_backups} =
+  "Тільки привілейований користувач може запустити резевне копіювання на \${EscHTML(\$host)}.";
+$Lang{Invalid_number__num}                         = "Неправильнмй номер \${EscHTML(\$In{num})}";
 $Lang{Unable_to_open__file__configuration_problem} = "Неможливо відкрити \$file: проблеми з конфігурацією?";
-$Lang{Only_privileged_users_can_view_log_or_config_files} = "Тільки привілейований користувач може переглядати log чи файл конфігурації.";
+$Lang{Only_privileged_users_can_view_log_or_config_files} =
+  "Тільки привілейований користувач може переглядати log чи файл конфігурації.";
 $Lang{Only_privileged_users_can_view_log_files} = "Тільки привілейований користувач може переглядати log файли.";
-$Lang{Only_privileged_users_can_view_email_summaries} = "Тільки привілейований користувач може переглядати інформацію про email.";
-$Lang{Only_privileged_users_can_browse_backup_files} = "Тільки привілейований користувач може переглядати файли резервних копій"
-                . " для хосту \${EscHTML(\$In{host})}.";
-$Lang{Only_privileged_users_can_delete_backups} = "Only privileged users can delete backups"
-                . " of host \${EscHTML(\$host)}.";
-$Lang{Empty_host_name} = "Порожнє ім\'я хоста.";
-$Lang{Directory___EscHTML} = "Тека \${EscHTML(\"\$TopDir/pc/\$host/\$num\")}"
-		    . " порожня";
-$Lang{Can_t_browse_bad_directory_name2} = "Не вдається відкрити неправильну назву теки"
-	            . " \${EscHTML(\$relDir)}";
-$Lang{Only_privileged_users_can_restore_backup_files} = "Тільки привілейований користувач може відновлювати файли з резервних копій"
-                . " для хоста \${EscHTML(\$In{host})}.";
+$Lang{Only_privileged_users_can_view_email_summaries} =
+  "Тільки привілейований користувач може переглядати інформацію про email.";
+$Lang{Only_privileged_users_can_browse_backup_files} =
+  "Тільки привілейований користувач може переглядати файли резервних копій для хосту \${EscHTML(\$In{host})}.";
+$Lang{Only_privileged_users_can_delete_backups} =
+  "Only privileged users can delete backups of host \${EscHTML(\$host)}.";
+$Lang{Empty_host_name}                  = "Порожнє ім\'я хоста.";
+$Lang{Directory___EscHTML}              = "Тека \${EscHTML(\"\$TopDir/pc/\$host/\$num\")} порожня";
+$Lang{Can_t_browse_bad_directory_name2} = "Не вдається відкрити неправильну назву теки \${EscHTML(\$relDir)}";
+$Lang{Only_privileged_users_can_restore_backup_files} =
+  "Тільки привілейований користувач може відновлювати файли з резервних копій для хоста \${EscHTML(\$In{host})}.";
 $Lang{Bad_host_name} = "Неправильне ім\'я хоста \${EscHTML(\$host)}";
-$Lang{You_haven_t_selected_any_files__please_go_Back_to} = "Ви не обрали жодного файла; Будь ласка поверніться назад"
-                . " та оберіть якийсь файл.";
-$Lang{You_haven_t_selected_any_hosts} = "Ви не обрали жодного хоста; будь ласка поверніться назад"
-                . " та оберіть якийсь хост.";
+$Lang{You_haven_t_selected_any_files__please_go_Back_to} =
+  "Ви не обрали жодного файла; Будь ласка поверніться назад та оберіть якийсь файл.";
+$Lang{You_haven_t_selected_any_hosts} =
+  "Ви не обрали жодного хоста; будь ласка поверніться назад та оберіть якийсь хост.";
 $Lang{Nice_try__but_you_can_t_put} = "Добра спроба, але ви не можете вставити \'..\' у будь яке ім\'я файлу";
-$Lang{Host__doesn_t_exist} = "Хост \${EscHTML(\$In{hostDest})} не існує";
-$Lang{You_don_t_have_permission_to_restore_onto_host} = "У Вас немає прав відновлення на хост"
-		    . " \${EscHTML(\$In{hostDest})}";
-$Lang{Can_t_open_create__openPath} = "не можливо відкрити/створити "
-		. "\${EscHTML(\"\$openPath\")}";
-$Lang{Only_privileged_users_can_restore_backup_files2} = "Тільки привілейований користувач може відновити резервну копію"
-                . " для хоста \${EscHTML(\$host)}.";
-$Lang{Empty_host_name} = "Порожнє ім\'я хоста";
+$Lang{Host__doesn_t_exist}         = "Хост \${EscHTML(\$In{hostDest})} не існує";
+$Lang{You_don_t_have_permission_to_restore_onto_host} =
+  "У Вас немає прав відновлення на хост \${EscHTML(\$In{hostDest})}";
+$Lang{Can_t_open_create__openPath} = "не можливо відкрити/створити \${EscHTML(\"\$openPath\")}";
+$Lang{Only_privileged_users_can_restore_backup_files2} =
+  "Тільки привілейований користувач може відновити резервну копію для хоста \${EscHTML(\$host)}.";
+$Lang{Empty_host_name}      = "Порожнє ім\'я хоста";
 $Lang{Unknown_host_or_user} = "Невідомий хост або користувач \${EscHTML(\$host)}";
-$Lang{Only_privileged_users_can_view_information_about} = "Тільки привілейований користувач може переглядати інформацію про"
-                . " хост \${EscHTML(\$host)}." ;
-$Lang{Only_privileged_users_can_view_archive_information} = "Тільки привілейований користувач може переглядати інформацію про архівування.";
-$Lang{Only_privileged_users_can_view_restore_information} = "Тільки привілейований користувач може переглядати інформацію про відновлення.";
-$Lang{Restore_number__num_for_host__does_not_exist} = "Номер відновлення \$num для хосту \${EscHTML(\$host)} не"
-	        . " існує.";
-$Lang{Archive_number__num_for_host__does_not_exist} = "Номер архіву \$num для хосту \${EscHTML(\$host)} не"
-                . " існує.";
-$Lang{Can_t_find_IP_address_for} = "Неможливо знайти IP адресу для \${EscHTML(\$host)}";
-$Lang{host_is_a_DHCP_host} = <<EOF;
+$Lang{Only_privileged_users_can_view_information_about} =
+  "Тільки привілейований користувач може переглядати інформацію про хост \${EscHTML(\$host)}.";
+$Lang{Only_privileged_users_can_view_archive_information} =
+  "Тільки привілейований користувач може переглядати інформацію про архівування.";
+$Lang{Only_privileged_users_can_view_restore_information} =
+  "Тільки привілейований користувач може переглядати інформацію про відновлення.";
+$Lang{Restore_number__num_for_host__does_not_exist} = "Номер відновлення \$num для хосту \${EscHTML(\$host)} не існує.";
+$Lang{Archive_number__num_for_host__does_not_exist} = "Номер архіву \$num для хосту \${EscHTML(\$host)} не існує.";
+$Lang{Can_t_find_IP_address_for}                    = "Неможливо знайти IP адресу для \${EscHTML(\$host)}";
+$Lang{host_is_a_DHCP_host}                          = <<EOF;
 \$host отримує адресу по DHCP і я не знаю його IP адреси.  Я перевірив
 netbios ім\'я \$ENV{REMOTE_ADDR}\$tryIP, та виявим, що цей комп\'ютер не є
  \$host.
@@ -1081,48 +1108,50 @@ EOF
 # !! Server Mesg !!
 # ------------------------------------
 
-$Lang{Backup_requested_on_DHCP__host} = "Запит на резерв. копіювання на DHCP \$host (\$In{hostIP}) від"
-		                      . " \$User з \$ENV{REMOTE_ADDR}";
-$Lang{Backup_requested_on__host_by__User} = "Запит на резерв. копіювання з \$host від \$User";
+$Lang{Backup_requested_on_DHCP__host} =
+  "Запит на резерв. копіювання на DHCP \$host (\$In{hostIP}) від \$User з \$ENV{REMOTE_ADDR}";
+$Lang{Backup_requested_on__host_by__User}        = "Запит на резерв. копіювання з \$host від \$User";
 $Lang{Backup_stopped_dequeued_on__host_by__User} = "Резерв. копіювання зупинено/виключено з черги на \$host від \$User";
-$Lang{Restore_requested_to_host__hostDest__backup___num} = "Запит на відновлення на \$hostDest, резерв. копія #\$num,"
-	     . " від \$User на \$ENV{REMOTE_ADDR}";
-$Lang{Delete_requested_for_backup_of__host_by__User} = "Delete requested for backup #\$num of \$host"
-             . " by \$User from \$ENV{REMOTE_ADDR}";
+$Lang{Restore_requested_to_host__hostDest__backup___num} =
+  "Запит на відновлення на \$hostDest, резерв. копія #\$num, від \$User на \$ENV{REMOTE_ADDR}";
+$Lang{Delete_requested_for_backup_of__host_by__User} =
+  "Delete requested for backup #\$num of \$host by \$User from \$ENV{REMOTE_ADDR}";
 $Lang{Archive_requested} = "Запит на архів від \$User на \$ENV{REMOTE_ADDR}";
 
 # -------------------------------------------------
 # ------- Stuff that was forgotten ----------------
 # -------------------------------------------------
 
-$Lang{Status} = "Статус";
-$Lang{PC_Summary} = "Зведена інформація по хостам";
-$Lang{LOG_file} = "LOG файл";
-$Lang{LOG_files} = "LOG файли";
-$Lang{Old_LOGs} = "Старі LOGи";
+$Lang{Status}        = "Статус";
+$Lang{PC_Summary}    = "Зведена інформація по хостам";
+$Lang{LOG_file}      = "LOG файл";
+$Lang{LOG_files}     = "LOG файли";
+$Lang{Old_LOGs}      = "Старі LOGи";
 $Lang{Email_summary} = "Поштові налаштування";
-$Lang{Config_file} = "Файл конфігурації";
+$Lang{Config_file}   = "Файл конфігурації";
+
 # $Lang{Hosts_file} = "Hosts file";
 $Lang{Current_queues} = "Поточні черги";
-$Lang{Documentation} = "Документація (англ)";
+$Lang{Documentation}  = "Документація (англ)";
 
 #$Lang{Host_or_User_name} = "<small>Host or User name:</small>";
-$Lang{Go} = "Перейти";
-$Lang{Hosts} = "Хости";
+$Lang{Go}            = "Перейти";
+$Lang{Hosts}         = "Хости";
 $Lang{Select_a_host} = "Виберіть хост...";
 
-$Lang{There_have_been_no_archives} = "<h2> Немає жодної резервної копії </h2>\n";
+$Lang{There_have_been_no_archives}      = "<h2> Немає жодної резервної копії </h2>\n";
 $Lang{This_PC_has_never_been_backed_up} = "<h2> З цього PC ніколи не створювалась резервна копія!! </h2>\n";
-$Lang{This_PC_is_used_by} = "<li>Цей PC використовується \${UserLink(\$user)}";
+$Lang{This_PC_is_used_by}               = "<li>Цей PC використовується \${UserLink(\$user)}";
 
 $Lang{Extracting_only_Errors} = "(Показати лише помилки)";
-$Lang{XferLOG} = "XferLOG";
-$Lang{Errors}  = "Помилки";
+$Lang{XferLOG}                = "XferLOG";
+$Lang{Errors}                 = "Помилки";
 
 # ------------
 $Lang{Last_email_sent_to__was_at___subject} = <<EOF;
 <li>Останній email було відіслано доo \${UserLink(\$user)} час \$mailTime, тема "\$subj".
 EOF
+
 # ------------
 $Lang{The_command_cmd_is_currently_running_for_started} = <<EOF;
 <li>Команда \$cmd зараз виконується для хоста \$host, started \$startTime.
@@ -1209,9 +1238,9 @@ $Lang{fileHeader} = <<EOF;
     </tr>
 EOF
 
-$Lang{Home} = "Додому";
-$Lang{Browse} = "Продивитися резерв. копії";
-$Lang{Last_bad_XferLOG} = "Last bad XferLOG";
+$Lang{Home}                         = "Додому";
+$Lang{Browse}                       = "Продивитися резерв. копії";
+$Lang{Last_bad_XferLOG}             = "Last bad XferLOG";
 $Lang{Last_bad_XferLOG_errors_only} = "Last bad XferLOG (errors&nbsp;only)";
 
 $Lang{This_display_is_merged_with_backup} = <<EOF;
@@ -1258,7 +1287,7 @@ EOF
 
 $Lang{BackupPC__Documentation} = "BackupPC: Документація";
 
-$Lang{No} = "ні";
+$Lang{No}  = "ні";
 $Lang{Yes} = "так";
 
 $Lang{The_directory_is_empty} = <<EOF;
@@ -1274,34 +1303,33 @@ $Lang{backupType_incr}    = "інкрементальний";
 $Lang{backupType_active}  = "active";
 $Lang{backupType_partial} = "частковий";
 
-$Lang{failed} = "неуспішно";
+$Lang{failed}  = "неуспішно";
 $Lang{success} = "успішно";
-$Lang{and} = "та";
+$Lang{and}     = "та";
 
 # ------
 # Hosts states and reasons
-$Lang{Status_idle} = "бездія";
-$Lang{Status_backup_starting} = "Резерв. копіювання запущено";
-$Lang{Status_backup_in_progress} = "Резерв. копіювання в процесі";
-$Lang{Status_restore_starting} = "Відновлення запущено";
+$Lang{Status_idle}                = "бездія";
+$Lang{Status_backup_starting}     = "Резерв. копіювання запущено";
+$Lang{Status_backup_in_progress}  = "Резерв. копіювання в процесі";
+$Lang{Status_restore_starting}    = "Відновлення запущено";
 $Lang{Status_restore_in_progress} = "Відновлення в процесі";
-$Lang{Status_admin_pending} = "link pending";
-$Lang{Status_admin_running} = "link running";
+$Lang{Status_admin_pending}       = "link pending";
+$Lang{Status_admin_running}       = "link running";
 
-$Lang{Reason_backup_done}    = "зроблено";
-$Lang{Reason_restore_done}   = "відновлення зроблено";
-$Lang{Reason_archive_done}   = "архівування зроблено";
-$Lang{Reason_nothing_to_do}  = "бездія";
-$Lang{Reason_backup_failed}  = "резерв. копіювання неуспішне";
-$Lang{Reason_restore_failed} = "відновлення неуспішне";
-$Lang{Reason_archive_failed} = "архівування  неуспішне";
-$Lang{Reason_no_ping}        = "no ping";
+$Lang{Reason_backup_done}              = "зроблено";
+$Lang{Reason_restore_done}             = "відновлення зроблено";
+$Lang{Reason_archive_done}             = "архівування зроблено";
+$Lang{Reason_nothing_to_do}            = "бездія";
+$Lang{Reason_backup_failed}            = "резерв. копіювання неуспішне";
+$Lang{Reason_restore_failed}           = "відновлення неуспішне";
+$Lang{Reason_archive_failed}           = "архівування  неуспішне";
+$Lang{Reason_no_ping}                  = "no ping";
 $Lang{Reason_backup_canceled_by_user}  = "резерв. копіювання перерване користувачем";
 $Lang{Reason_restore_canceled_by_user} = "відновлення перерване користувачем";
 $Lang{Reason_archive_canceled_by_user} = "архівування перерване користувачем";
-$Lang{Disabled_OnlyManualBackups}  = "auto відключене";  
-$Lang{Disabled_AllBackupsDisabled} = "відключене";                  
-
+$Lang{Disabled_OnlyManualBackups}      = "auto відключене";
+$Lang{Disabled_AllBackupsDisabled}     = "відключене";
 
 # ---------
 # Email messages
@@ -1374,7 +1402,7 @@ $headers
 Dear $userName,
 
 The Outlook files on your PC have $howLong.
-These files contain all your email, attachments, contact and calendar           
+These files contain all your email, attachments, contact and calendar
 information.  Your PC has been correctly backed up $numBackups times from
 $firstTime to $lastTime days ago.  However, Outlook locks all its files when
 it is running, preventing these files from being backed up.
@@ -1383,7 +1411,7 @@ It is recommended you backup the Outlook files when you are connected
 to the network by exiting Outlook and all other applications, and,
 using just your browser, go to this link:
 
-    $CgiURL?host=$host               
+    $CgiURL?host=$host
 
 Select "Start Incr Backup" twice to start a new incremental backup.
 You can select "Return to $host page" and then hit "reload" to check
@@ -1395,7 +1423,7 @@ BackupPC Genie
 https://backuppc.github.io/backuppc
 EOF
 
-$Lang{howLong_not_been_backed_up} = "not been backed up successfully";
+$Lang{howLong_not_been_backed_up}               = "not been backed up successfully";
 $Lang{howLong_not_been_backed_up_for_days_days} = "not been backed up for \$days days";
 
 #######################################################################
@@ -1410,9 +1438,9 @@ Full Size/GiB: \$fullSize;
 Speed MB/sec: \$fullRate;
 Incr Count: \$incrCnt;
 Incr Age/Days: \$incrAge;
-State: \$host_state;
-Disabled: \$host_disabled;
-Last Attempt: \$host_last_attempt;
+State: \$hostState;
+Disabled: \$hostDisabled;
+Last Attempt: \$hostLastAttempt;
 EOF
 
 #######################################################################
@@ -1420,50 +1448,50 @@ EOF
 #######################################################################
 
 $Lang{Only_privileged_users_can_edit_config_files} = "Only privileged users can edit configuration settings.";
-$Lang{CfgEdit_Edit_Config} = "Правити конфігурацію";
-$Lang{CfgEdit_Edit_Hosts}  = "Правити хости";
+$Lang{CfgEdit_Edit_Config}                         = "Правити конфігурацію";
+$Lang{CfgEdit_Edit_Hosts}                          = "Правити хости";
 
-$Lang{CfgEdit_Title_Server} = "Сервер";
-$Lang{CfgEdit_Title_General_Parameters} = "Загальні параметри";
-$Lang{CfgEdit_Title_Wakeup_Schedule} = "Wakeup Schedule";
-$Lang{CfgEdit_Title_Concurrent_Jobs} = "Concurrent Jobs";
-$Lang{CfgEdit_Title_Pool_Filesystem_Limits} = "Обмеження файлової системи пула";
-$Lang{CfgEdit_Title_Other_Parameters} = "Інші параметри";
-$Lang{CfgEdit_Title_Remote_Apache_Settings} = "Налаштування віддаленого Apache";
-$Lang{CfgEdit_Title_Program_Paths} = "Шляхи до програми";
-$Lang{CfgEdit_Title_Install_Paths} = "Шлях встановлення";
-$Lang{CfgEdit_Title_Email} = "Email";
-$Lang{CfgEdit_Title_Email_settings} = "Налаштування Email";
-$Lang{CfgEdit_Title_Email_User_Messages} = "Email User Messages";
-$Lang{CfgEdit_Title_CGI} = "CGI";
-$Lang{CfgEdit_Title_Admin_Privileges} = "Admin Privileges";
-$Lang{CfgEdit_Title_Page_Rendering} = "Page Rendering";
-$Lang{CfgEdit_Title_Paths} = "Шляхи";
-$Lang{CfgEdit_Title_User_URLs} = "User URLs";
-$Lang{CfgEdit_Title_User_Config_Editing} = "User Config Editing";
-$Lang{CfgEdit_Title_Xfer} = "Xfer";
-$Lang{CfgEdit_Title_Xfer_Settings} = "Налаштування Xfer";
-$Lang{CfgEdit_Title_Ftp_Settings} = "Налаштування FTP";
-$Lang{CfgEdit_Title_Smb_Settings} = "Налаштування Smb";
-$Lang{CfgEdit_Title_Tar_Settings} = "Налаштування Tar";
-$Lang{CfgEdit_Title_Rsync_Settings} = "Налаштування Rsync";
-$Lang{CfgEdit_Title_Rsyncd_Settings} = "Налаштування Rsyncd";
-$Lang{CfgEdit_Title_Archive_Settings} = "Налаштування архівування";
-$Lang{CfgEdit_Title_Include_Exclude} = "Включити/Виключити";
-$Lang{CfgEdit_Title_Smb_Paths_Commands} = "Шляхи/команди Smb";
-$Lang{CfgEdit_Title_Tar_Paths_Commands} = "Шляхи/команди Tar";
+$Lang{CfgEdit_Title_Server}                    = "Сервер";
+$Lang{CfgEdit_Title_General_Parameters}        = "Загальні параметри";
+$Lang{CfgEdit_Title_Wakeup_Schedule}           = "Wakeup Schedule";
+$Lang{CfgEdit_Title_Concurrent_Jobs}           = "Concurrent Jobs";
+$Lang{CfgEdit_Title_Pool_Filesystem_Limits}    = "Обмеження файлової системи пула";
+$Lang{CfgEdit_Title_Other_Parameters}          = "Інші параметри";
+$Lang{CfgEdit_Title_Remote_Apache_Settings}    = "Налаштування віддаленого Apache";
+$Lang{CfgEdit_Title_Program_Paths}             = "Шляхи до програми";
+$Lang{CfgEdit_Title_Install_Paths}             = "Шлях встановлення";
+$Lang{CfgEdit_Title_Email}                     = "Email";
+$Lang{CfgEdit_Title_Email_settings}            = "Налаштування Email";
+$Lang{CfgEdit_Title_Email_User_Messages}       = "Email User Messages";
+$Lang{CfgEdit_Title_CGI}                       = "CGI";
+$Lang{CfgEdit_Title_Admin_Privileges}          = "Admin Privileges";
+$Lang{CfgEdit_Title_Page_Rendering}            = "Page Rendering";
+$Lang{CfgEdit_Title_Paths}                     = "Шляхи";
+$Lang{CfgEdit_Title_User_URLs}                 = "User URLs";
+$Lang{CfgEdit_Title_User_Config_Editing}       = "User Config Editing";
+$Lang{CfgEdit_Title_Xfer}                      = "Xfer";
+$Lang{CfgEdit_Title_Xfer_Settings}             = "Налаштування Xfer";
+$Lang{CfgEdit_Title_Ftp_Settings}              = "Налаштування FTP";
+$Lang{CfgEdit_Title_Smb_Settings}              = "Налаштування Smb";
+$Lang{CfgEdit_Title_Tar_Settings}              = "Налаштування Tar";
+$Lang{CfgEdit_Title_Rsync_Settings}            = "Налаштування Rsync";
+$Lang{CfgEdit_Title_Rsyncd_Settings}           = "Налаштування Rsyncd";
+$Lang{CfgEdit_Title_Archive_Settings}          = "Налаштування архівування";
+$Lang{CfgEdit_Title_Include_Exclude}           = "Включити/Виключити";
+$Lang{CfgEdit_Title_Smb_Paths_Commands}        = "Шляхи/команди Smb";
+$Lang{CfgEdit_Title_Tar_Paths_Commands}        = "Шляхи/команди Tar";
 $Lang{CfgEdit_Title_Rsync_Paths_Commands_Args} = "Шляхи/команди/аргументи Rsync";
-$Lang{CfgEdit_Title_Rsyncd_Port_Args} = "Порт/аргументи Rsyncd";
-$Lang{CfgEdit_Title_Archive_Paths_Commands} = "Шляхи/команди архівування";
-$Lang{CfgEdit_Title_Schedule} = "Планувальник";
-$Lang{CfgEdit_Title_Full_Backups} = "Повне резерв. копіювання";
-$Lang{CfgEdit_Title_Incremental_Backups} = "Інкрементальне резерв. копіювання";
-$Lang{CfgEdit_Title_Blackouts} = "Blackouts";
-$Lang{CfgEdit_Title_Other} = "Інше";
-$Lang{CfgEdit_Title_Backup_Settings} = "Налаштування резерв. копіювання";
-$Lang{CfgEdit_Title_Client_Lookup} = "Пошук клієнтів";
-$Lang{CfgEdit_Title_User_Commands} = "Команди користувача";
-$Lang{CfgEdit_Title_Hosts} = "Хости";
+$Lang{CfgEdit_Title_Rsyncd_Port_Args}          = "Порт/аргументи Rsyncd";
+$Lang{CfgEdit_Title_Archive_Paths_Commands}    = "Шляхи/команди архівування";
+$Lang{CfgEdit_Title_Schedule}                  = "Планувальник";
+$Lang{CfgEdit_Title_Full_Backups}              = "Повне резерв. копіювання";
+$Lang{CfgEdit_Title_Incremental_Backups}       = "Інкрементальне резерв. копіювання";
+$Lang{CfgEdit_Title_Blackouts}                 = "Blackouts";
+$Lang{CfgEdit_Title_Other}                     = "Інше";
+$Lang{CfgEdit_Title_Backup_Settings}           = "Налаштування резерв. копіювання";
+$Lang{CfgEdit_Title_Client_Lookup}             = "Пошук клієнтів";
+$Lang{CfgEdit_Title_User_Commands}             = "Команди користувача";
+$Lang{CfgEdit_Title_Hosts}                     = "Хости";
 
 $Lang{CfgEdit_Hosts_Comment} = <<EOF;
 To add a new host, select Add and then enter the name.  To start with
@@ -1489,44 +1517,30 @@ Note: Check Override if you want to modify a value specific to this host.
 <p>
 EOF
 
-$Lang{CfgEdit_Button_Save}     = "Зберегти";
-$Lang{CfgEdit_Button_Insert}   = "Вставити";
-$Lang{CfgEdit_Button_Delete}   = "Видалити";
-$Lang{CfgEdit_Button_Add}      = "Додати";
-$Lang{CfgEdit_Button_Override} = "Перезаписати";
-$Lang{CfgEdit_Button_New_Key}  = "Нове значення";
+$Lang{CfgEdit_Button_Save}      = "Зберегти";
+$Lang{CfgEdit_Button_Insert}    = "Вставити";
+$Lang{CfgEdit_Button_Delete}    = "Видалити";
+$Lang{CfgEdit_Button_Add}       = "Додати";
+$Lang{CfgEdit_Button_Override}  = "Перезаписати";
+$Lang{CfgEdit_Button_New_Key}   = "Нове значення";
 $Lang{CfgEdit_Button_New_Share} = "New ShareName or '*'";
 
-$Lang{CfgEdit_Error_No_Save}
-            = "Error: No save due to errors";
-$Lang{CfgEdit_Error__must_be_an_integer}
-            = "Error: \$var must be an integer";
-$Lang{CfgEdit_Error__must_be_real_valued_number}
-            = "Error: \$var must be a real-valued number";
-$Lang{CfgEdit_Error__entry__must_be_an_integer}
-            = "Error: \$var entry \$k must be an integer";
-$Lang{CfgEdit_Error__entry__must_be_real_valued_number}
-            = "Error: \$var entry \$k must be a real-valued number";
-$Lang{CfgEdit_Error__must_be_executable_program}
-            = "Error: \$var must be a valid executable path";
-$Lang{CfgEdit_Error__must_be_valid_option}
-            = "Error: \$var must be a valid option";
-$Lang{CfgEdit_Error_Copy_host_does_not_exist}
-            = "Copy host \$copyHost doesn't exist; creating full host name \$fullHost.  Delete this host if that is not what you wanted.";
+$Lang{CfgEdit_Error_No_Save}                            = "Error: No save due to errors";
+$Lang{CfgEdit_Error__must_be_an_integer}                = "Error: \$var must be an integer";
+$Lang{CfgEdit_Error__must_be_real_valued_number}        = "Error: \$var must be a real-valued number";
+$Lang{CfgEdit_Error__entry__must_be_an_integer}         = "Error: \$var entry \$k must be an integer";
+$Lang{CfgEdit_Error__entry__must_be_real_valued_number} = "Error: \$var entry \$k must be a real-valued number";
+$Lang{CfgEdit_Error__must_be_executable_program}        = "Error: \$var must be a valid executable path";
+$Lang{CfgEdit_Error__must_be_valid_option}              = "Error: \$var must be a valid option";
+$Lang{CfgEdit_Error_Copy_host_does_not_exist} =
+  "Copy host \$copyHost doesn't exist; creating full host name \$fullHost.  Delete this host if that is not what you wanted.";
 
-$Lang{CfgEdit_Log_Copy_host_config}
-            = "\$User copied config from host \$fromHost to \$host\n";
-$Lang{CfgEdit_Log_Delete_param}
-            = "\$User deleted \$p from \$conf\n";
-$Lang{CfgEdit_Log_Add_param_value}
-            = "\$User added \$p to \$conf, set to \$value\n";
-$Lang{CfgEdit_Log_Change_param_value}
-            = "\$User changed \$p in \$conf to \$valueNew from \$valueOld\n";
-$Lang{CfgEdit_Log_Host_Delete}
-            = "\$User deleted host \$host\n";
-$Lang{CfgEdit_Log_Host_Change}
-            = "\$User host \$host changed \$key from \$valueOld to \$valueNew\n";
-$Lang{CfgEdit_Log_Host_Add}
-            = "\$User added host \$host: \$value\n";
-  
+$Lang{CfgEdit_Log_Copy_host_config}   = "\$User copied config from host \$fromHost to \$host\n";
+$Lang{CfgEdit_Log_Delete_param}       = "\$User deleted \$p from \$conf\n";
+$Lang{CfgEdit_Log_Add_param_value}    = "\$User added \$p to \$conf, set to \$value\n";
+$Lang{CfgEdit_Log_Change_param_value} = "\$User changed \$p in \$conf to \$valueNew from \$valueOld\n";
+$Lang{CfgEdit_Log_Host_Delete}        = "\$User deleted host \$host\n";
+$Lang{CfgEdit_Log_Host_Change}        = "\$User host \$host changed \$key from \$valueOld to \$valueNew\n";
+$Lang{CfgEdit_Log_Host_Add}           = "\$User added host \$host: \$value\n";
+
 #end of lang_en.pm

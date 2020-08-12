@@ -4,14 +4,14 @@
 # BackupPC_attribPrint: print the contents of attrib files.
 #
 # DESCRIPTION
-#  
+#
 #   Usage: BackupPC_attribPrint attribPath
 #
 # AUTHOR
 #   Craig Barratt  <cbarratt@users.sourceforge.net>
 #
 # COPYRIGHT
-#   Copyright (C) 2005-2013  Craig Barratt
+#   Copyright (C) 2005-2020  Craig Barratt
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -28,14 +28,14 @@
 #
 #========================================================================
 #
-# Version 4.0.0alpha3, released 30 Nov 2013.
+# Version 4.3.3, released 5 Apr 2020.
 #
 # See http://backuppc.sourceforge.net.
 #
 #========================================================================
 
 use strict;
-no  utf8;
+no utf8;
 use lib "/usr/local/BackupPC/lib";
 
 use BackupPC::Lib;
@@ -57,8 +57,8 @@ my($dir, $file, $specificInode, $specificInodeHexStr);
 
 if ( $ARGV[0] =~ m{(.*/inode)/(\d+)$} ) {
     $specificInode = $2;
-    $dir  = sprintf("%s/%02x", $1, ($specificInode >> 17) & 0x7f);
-    $file = sprintf("attrib%02x", ($specificInode >> 10) & 0x7f);
+    $dir           = sprintf("%s/%02x", $1, ($specificInode >> 17) & 0x7f);
+    $file          = sprintf("attrib%02x", ($specificInode >> 10) & 0x7f);
     do {
         $specificInodeHexStr .= sprintf("%02x", $specificInode & 0xff);
         $specificInode = $specificInode >> 8;
@@ -68,10 +68,10 @@ if ( $ARGV[0] =~ m{(.*/inode)/(\d+)$} ) {
     $dir  = $1;
     $file = $2;
 } elsif ( -f $ARGV[0] || $ARGV[0] eq "attrib" ) {
-    $dir = ".";
+    $dir  = ".";
     $file = $ARGV[0];
 } else {
-    $dir = $ARGV[0];
+    $dir  = $ARGV[0];
     $file = "attrib";
 }
 
@@ -90,21 +90,28 @@ if ( !$attrib->read($dir, $file) ) {
         exit(1);
     }
 }
-my $info = $attrib->get();
-#
-# convert digest to a hex string
-#
-foreach my $file ( keys(%$info) ) {
-    next if ( !defined($info->{$file}{digest}) );
-    $info->{$file}{digest} = unpack("H*", $info->{$file}{digest});
+if ( my $msg = BackupPC::XS::Lib::logMsgGet() ) {
+    print join("", @$msg);
 }
 if ( length($attrib->digest()) ) {
     printf("Attrib digest is %s\n", unpack("H*", $attrib->digest()));
 }
 $Data::Dumper::Indent   = 1;
 $Data::Dumper::Sortkeys = 1;
-if ( defined($specificInode) ) {
-    print Dumper($info->{$specificInodeHexStr});
-} else {
-    print Dumper($info);
+$Data::Dumper::Pad      = "  ";
+$Data::Dumper::Terse    = 1;
+my $idx = 0;
+my $info;
+print("\$attrib = {\n");
+
+while ( 1 ) {
+    ($info, $idx) = $attrib->iterate($idx);
+    last if ( !defined($info) );
+    next if ( defined($specificInode) && $info->{name} ne $specificInodeHexStr );
+    $info->{digest} = unpack("H*", $info->{digest}) if ( defined($info->{digest}) );
+    my $str = Data::Dumper->Dump([$info]);
+    $str =~ s/\n$//;
+    $str =~ s/^ *//;
+    print "  '$info->{name}' => ", $str, ",\n";
 }
+print("};\n")

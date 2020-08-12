@@ -11,7 +11,7 @@
 #   Craig Barratt  <cbarratt@users.sourceforge.net>
 #
 # COPYRIGHT
-#   Copyright (C) 2001-2013  Craig Barratt
+#   Copyright (C) 2001-2020  Craig Barratt
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 #
 #========================================================================
 #
-# Version 4.0.0alpha3, released 1 Dec 2013.
+# Version 4.3.3, released 5 Apr 2020.
 #
 # See http://backuppc.sourceforge.net.
 #
@@ -46,19 +46,19 @@ sub start
 
 sub run
 {
-    my($t) = @_;
-    my $bpc = $t->{bpc};
+    my($t)   = @_;
+    my $bpc  = $t->{bpc};
     my $conf = $t->{conf};
-    
+
     my(@HostList, @BackupList, $archiveClientCmd, $archiveClientCmd2, $logMsg);
 
     $archiveClientCmd = $conf->{ArchiveClientCmd};
-    $t->{xferOK} = 1;
-    @HostList = $t->{HostList};
-    @BackupList = $t->{BackupList};
-    my $i = 0;
+    $t->{xferOK}      = 1;
+    @HostList         = $t->{HostList};
+    @BackupList       = $t->{BackupList};
+    my $i             = 0;
     my $tarCreatePath = "$conf->{InstallDir}/bin/BackupPC_tarCreate";
-    while (${@HostList[0]}[$i]) {
+    while ( ${@HostList[0]}[$i] ) {
         #
         #   Merge variables into @archiveClientCmd
         #
@@ -77,15 +77,18 @@ sub run
             parpath       => $conf->{ParPath},
         };
 
-        $archiveClientCmd2 = $bpc->cmdVarSubstitute($archiveClientCmd,
-                                                    $cmdargs);
+        $archiveClientCmd2 = $bpc->cmdVarSubstitute($archiveClientCmd, $cmdargs);
         $t->{XferLOG}->write(\"Executing: @$archiveClientCmd2\n");
 
-        $bpc->cmdSystemOrEvalLong($archiveClientCmd2,
+        $bpc->cmdSystemOrEvalLong(
+            $archiveClientCmd2,
             sub {
                 $errStr = $_[0];
                 $t->{XferLOG}->write(\$_[0]);
-            }, 0, $t->{pidHandler});
+            },
+            0,
+            $t->{pidHandler}
+        );
         if ( $? ) {
             ($t->{_errStr} = $errStr) =~ s/[\n\r]+//;
             return;

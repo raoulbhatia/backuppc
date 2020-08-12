@@ -11,7 +11,7 @@
 #   Craig Barratt  <cbarratt@users.sourceforge.net>
 #
 # COPYRIGHT
-#   Copyright (C) 2004-2017  Craig Barratt
+#   Copyright (C) 2004-2020  Craig Barratt
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 #
 #========================================================================
 #
-# Version 4.1.1, released 29 Mar 2017.
+# Version 4.3.3, released 6 Jun 2020.
 #
 # See http://backuppc.sourceforge.net.
 #
@@ -42,24 +42,23 @@ use Data::Dumper;
 
 sub new
 {
-    my $class = shift;
+    my $class  = shift;
     my($paths) = @_;
-    my $flds = {
+    my $flds   = {
         BackupFields => [qw(
-                    num type startTime endTime
-                    nFiles size nFilesExist sizeExist nFilesNew sizeNew
-                    xferErrs xferBadFile xferBadShare tarErrs
-                    compress sizeExistComp sizeNewComp
-                    noFill fillFromNum mangle xferMethod level
-                    charset version inodeLast
-                )],
+            num type startTime endTime nFiles size nFilesExist sizeExist
+            nFilesNew sizeNew xferErrs xferBadFile xferBadShare tarErrs
+            compress sizeExistComp sizeNewComp noFill fillFromNum mangle
+            xferMethod level charset version inodeLast keep share2path
+            comment
+        )],
         RestoreFields => [qw(
-                    num startTime endTime result errorMsg nFiles size
-                    tarCreateErrs xferErrs
-                )],
+            num startTime endTime result errorMsg nFiles size
+            tarCreateErrs xferErrs
+        )],
         ArchiveFields => [qw(
-                    num startTime endTime result errorMsg
-                )],
+            num startTime endTime result errorMsg
+        )],
     };
 
     return BackupPC::Storage::Text->new($flds, $paths, @_);
@@ -79,10 +78,9 @@ sub backupInfoWrite
     my $bkupFd;
 
     return if ( !$force && -f "$pcDir/$bkupNum/backupInfo" );
-    my($dump) = Data::Dumper->new(
-             [   $bkupInfo],
-             [qw(*backupInfo)]);
+    my($dump) = Data::Dumper->new([$bkupInfo], [qw(*backupInfo)]);
     $dump->Indent(1);
+    $dump->Sortkeys(1);
     if ( open($bkupFd, ">", "$pcDir/$bkupNum/backupInfo") ) {
         print($bkupFd $dump->Dump);
         close($bkupFd);
@@ -90,7 +88,7 @@ sub backupInfoWrite
         print("backupInfoWrite: can't open/create $pcDir/$bkupNum/backupInfo\n");
     }
     utime($bkupInfo->{endTime}, $bkupInfo->{endTime}, "$pcDir/$bkupNum")
-                if ( defined($bkupInfo->{endTime}) );
+      if ( defined($bkupInfo->{endTime}) );
 }
 
 1;
