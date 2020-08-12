@@ -1,4 +1,4 @@
-backuppc (4.4.0) UNRELEASED; urgency=medium
+backuppc (4.4.0) stable; urgency=medium
 
   * New release BackupPC 4.4.0.
   * Bump BackupPC::XS dependency to >= 0.62.
