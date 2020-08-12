@@ -1,6 +1,7 @@
 backuppc (4.4.0) UNRELEASED; urgency=medium
 
   * New release BackupPC 4.4.0.
+  * Bump BackupPC::XS dependency to >= 0.62.
 
  -- Raoul Bhatia <raoul@bhatia.at>  Wed, 12 Aug 2020 11:22:20 +0200
 
