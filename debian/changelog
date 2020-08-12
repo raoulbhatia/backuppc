@@ -2,6 +2,8 @@ backuppc (4.4.0) UNRELEASED; urgency=medium
 
   * New release BackupPC 4.4.0.
   * Bump BackupPC::XS dependency to >= 0.62.
+  * Make /usr/share/backuppc/lib/realindex.cgi executable.
+  * Make /usr/share/backuppc/bin/* executable, closes #16
 
  -- Raoul Bhatia <raoul@bhatia.at>  Wed, 12 Aug 2020 11:22:20 +0200
 

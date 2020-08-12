@@ -115,6 +115,8 @@ install: build
 	rm -rf debian/backuppc/etc/backuppc/config.pl debian/backuppc/etc/backuppc/config.pl.sample debian/backuppc/etc/backuppc/hosts.sample
 	mkdir debian/backuppc/var/lib/backuppc/conf
 	ln -s /etc/backuppc/config.pl debian/backuppc/var/lib/backuppc/conf/config.pl
+	chmod 750 debian/backuppc/usr/share/backuppc/bin/*
+	chmod 750 debian/backuppc/usr/share/backuppc/lib/realindex.cgi
 
 # Build architecture-independent files here.
 binary-indep: build install
