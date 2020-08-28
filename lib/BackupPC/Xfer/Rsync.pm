@@ -143,8 +143,8 @@ sub start
                     push(@$rsyncArgs, "--password-file=$t->{pwFile}");
                 }
                 if ( !$ok ) {
-                    $t->{XferLOG}->write(\"Failed to open/create rsynd pw file $t->{pwFile} ($!)\n");
-                    $t->{_errStr} = "Failed to open/create rsynd pw file $t->{pwFile} ($!)";
+                    $t->{XferLOG}->write(\"Failed to open/create rsyncd pw file $t->{pwFile} ($!)\n");
+                    $t->{_errStr} = "Failed to open/create rsyncd pw file $t->{pwFile} ($!)";
                     return;
                 }
             }
@@ -402,8 +402,8 @@ sub start
                 close($pwFd);
                 push(@$rsyncArgs, "--password-file=$t->{pwFile}");
             } else {
-                $t->{XferLOG}->write(\"Failed to open/create rsynd pw file $t->{pwFile}\n");
-                $t->{_errStr} = "Failed to open/create rsynd pw file $t->{pwFile}";
+                $t->{XferLOG}->write(\"Failed to open/create rsyncd pw file $t->{pwFile}\n");
+                $t->{_errStr} = "Failed to open/create rsyncd pw file $t->{pwFile}";
                 return;
             }
             my $shareName = $shareNamePath;

@@ -1412,7 +1412,7 @@ module (ie: the thing in square brackets in rsyncd's conf file -- see
 rsyncd.conf), not a file system path.
 
 Be aware that rsyncd will remove the leading '/' from path names in
-symbolic links if you specify "use chroot = no" in the rsynd.conf file.
+symbolic links if you specify "use chroot = no" in the rsyncd.conf file.
 See the rsyncd.conf manual page for more information.
 
 =item tar
